@@ -1,6 +1,7 @@
 package kareemahmed.spotifyxtremeedition;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,7 +17,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.squareup.picasso.Picasso;
-
+import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.EditText;
 import java.util.List;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MyViewHolder> {
@@ -65,6 +70,9 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MyViewHold
             @Override
             public void onClick(View view) {
                 Toast.makeText(context,"You clicked "+movie.getName(), Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(context, PickSubCategory.class);
+                intent.putExtra("Parcel Data",movie);
+                context.startActivity(intent);
             }
         });
     }

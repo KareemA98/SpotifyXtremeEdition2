@@ -1,6 +1,8 @@
 package kareemahmed.spotifyxtremeedition;
 
 import android.graphics.Bitmap;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.android.volley.Response;
 import com.android.volley.toolbox.ImageRequest;
@@ -9,7 +11,7 @@ import com.android.volley.toolbox.ImageRequest;
  * Created by krimb on 01/03/2018.
  */
 
-public class Playlists {
+public class Playlists implements Parcelable {
     private String name,trackNumber,image,id;
     public Playlists() {
     }
@@ -20,6 +22,25 @@ public class Playlists {
         this.image = image;
         this.id = id;
     }
+
+    protected Playlists(Parcel in) {
+        name = in.readString();
+        trackNumber = in.readString();
+        image = in.readString();
+        id = in.readString();
+    }
+
+    public static final Creator<Playlists> CREATOR = new Creator<Playlists>() {
+        @Override
+        public Playlists createFromParcel(Parcel in) {
+            return new Playlists(in);
+        }
+
+        @Override
+        public Playlists[] newArray(int size) {
+            return new Playlists[size];
+        }
+    };
 
     public String getName() {
         return name;
@@ -54,4 +75,16 @@ public class Playlists {
     }
 
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(name);
+        parcel.writeString(trackNumber);
+        parcel.writeString(image);
+        parcel.writeString(id);
+    }
 }
