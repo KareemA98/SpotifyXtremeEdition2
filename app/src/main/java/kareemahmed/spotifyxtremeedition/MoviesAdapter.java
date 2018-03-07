@@ -72,7 +72,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MyViewHold
                 Toast.makeText(context,"You clicked "+movie.getName(), Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(context, PickSubCategory.class);
                 intent.putExtra("Parcel Data",movie);
-                context.startActivity(intent);
+                movie.getTracks("https://api.spotify.com/v1/users/"+ movie.getUserId() + "/playlists/"+ movie.getId() + "/tracks",context,intent);
+                //context.startActivity(intent);
             }
         });
     }
