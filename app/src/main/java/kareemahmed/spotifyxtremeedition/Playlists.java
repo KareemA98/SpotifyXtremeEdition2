@@ -29,9 +29,11 @@ import java.util.Map;
 public class Playlists implements Parcelable {
     private String name,trackNumber,image,id,userId;
     private MoviesAdapter mAdapter;
-    public ArrayList<Tracks> trackList = new ArrayList<Tracks>();
+    private ArrayList<Tracks> trackList = new ArrayList<Tracks>();
     public Playlists() {
+
     }
+
 
     public Playlists(String name, String trackNumber, String image , String id , String userId) {
         this.name = name;
@@ -87,121 +89,107 @@ public class Playlists implements Parcelable {
         return userId;
     }
 
-    public void getTracks(String url, final Context context , final Intent intent) {
+    public void getTracks(String url, final Context context) {
         System.out.println("in Get Tracks");
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest
-                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            System.out.println("responce");
-                            JSONArray tracksArray = response.getJSONArray("items");
-                            for(int i = 0; i < tracksArray.length();i++){
-                                JSONObject obj = tracksArray.getJSONObject(i);
-                                String name = obj.getJSONObject("track").getString("name");
-                                getMoreTrackInfo(name,obj.getJSONObject("track").getString("href"),context);
+        int amountOfSongs = Integer.parseInt(trackNumber);
+        int offset = 0;
+        do {
+            String newUrl = (url + "?limit=50&?offset=" + offset);
+            JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                    (Request.Method.GET, newUrl, null, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            try {
+                                System.out.println("responce");
+                                String artisturls = "";
+                                String artisturls2 = "";
+                                ArrayList<String> names = new ArrayList<String>();
+                                ArrayList<String> albums = new ArrayList<String>();
+                                ArrayList<String> releases = new ArrayList<String>();
+                                ArrayList<String> durations = new ArrayList<String>();
+                                ArrayList<String> explicits = new ArrayList<String>();
+                                ArrayList<String> popularity = new ArrayList<String>();
+                                JSONArray tracksArray = response.getJSONArray("items");
+                                for (int i = 0; i < tracksArray.length(); i++) {
+                                    JSONObject obj = tracksArray.getJSONObject(i);
+                                    names.add(obj.getJSONObject("track").getString("name"));
+                                    albums.add(obj.getJSONObject("track").getJSONObject("album").getString("name"));
+                                    releases.add(obj.getJSONObject("track").getJSONObject("album").getString("release_date"));
+                                    durations.add(obj.getJSONObject("track").getString("duration_ms"));
+                                    explicits.add(obj.getJSONObject("track").getString("explicit"));
+                                    popularity.add(obj.getJSONObject("track").getString("popularity"));
+                                    artisturls += obj.getJSONObject("track").getJSONObject("album").getJSONArray("artists").getJSONObject(0).getString("id") + ",";
+                                }
+                                getMoreTrackInfo(names, albums , releases , durations , explicits , popularity , artisturls,context);
+                            } catch (JSONException e) {
+
                             }
                         }
-                        catch (JSONException e){
+                    }, new Response.ErrorListener() {
 
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            // TODO Auto-generated method stub
                         }
-                        context.startActivity(intent);
-                    }
-                }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // TODO Auto-generated method stub
-                    }
-                }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<String, String>();
-                //headers.put("Content-Type", "application/json");
-                headers.put("Authorization","Bearer " + MainActivity.mAccessToken);
-                return headers;
-            }
-        }
-                ;
-        AppSingleton.getInstance(context).addToRequestQueue(jsObjRequest);
+                    }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    HashMap<String, String> headers = new HashMap<String, String>();
+                    //headers.put("Content-Type", "application/json");
+                    headers.put("Authorization", "Bearer " + MainActivity.mAccessToken);
+                    return headers;
+                }
+            };
+            AppSingleton.getInstance(context).addToRequestQueue(jsObjRequest);
+            offset+=50;
+            amountOfSongs -=50;
+        } while (amountOfSongs > 1);
     }
 
-    public void getMoreTrackInfo(final String name , String url, final Context context){
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest
-                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            String albumName = response.getJSONObject("album").getString("name");
-                            String artistName = response.getJSONArray("artists").getJSONObject(0).getString("name");
-                            String artistUrl = response.getJSONArray("artists").getJSONObject(0).getString("href");
-                            String duration = response.getString("duration_ms");
-                            String explicit = response.getString("explicit");
-                            String popularity = response.getString("popularity");
-                            getEvenMoreTrackInfo(albumName,artistName,artistUrl,name,duration,explicit,popularity,context);
-                        }
-                        catch (JSONException e){
+    public void getMoreTrackInfo(final ArrayList name , final ArrayList albums , final ArrayList releases , final ArrayList durations , final ArrayList explicits , final ArrayList popularity ,
+                                 String artisturls , final Context context){
+        System.out.println("In Get more info");
+        artisturls = artisturls.substring(0, artisturls.length() - 1);
+        String url ="https://api.spotify.com/v1/artists?ids=" + artisturls;
+            JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                    (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            try {
+                                for(int i = 0;i <50 ; i++){
+                                ArrayList<String> genres= new ArrayList<String>();
+                                JSONArray genresJSON = response.getJSONArray("artists").getJSONObject(i).getJSONArray("genres");
+                                for (int j = 0; j < genresJSON.length();j++){
+                                    System.out.println("in genres");
+                                    genres.add(genresJSON.getString(j));
+                                }
+                                String artistName = response.getJSONArray("artists").getJSONObject(i).getString("name");
+                                trackList.add(new Tracks(name.get(i).toString(), albums.get(i).toString(),artistName , releases.get(i).toString(),
+                                        durations.get(i).toString(),explicits.get(i).toString(),popularity.get(i).toString(),genres));
+                                System.out.println("Tracks added ");
+                                }
 
-                        }
-                    }
-                }, new Response.ErrorListener() {
+                            } catch (JSONException e) {
 
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // TODO Auto-generated method stub
-                    }
-                }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<String, String>();
-                //headers.put("Content-Type", "application/json");
-                headers.put("Authorization","Bearer " + MainActivity.mAccessToken);
-                return headers;
-            }
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            // TODO Auto-generated method stub
+                        }
+                    }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    HashMap<String, String> headers = new HashMap<String, String>();
+                    //headers.put("Content-Type", "application/json");
+                    headers.put("Authorization", "Bearer " + MainActivity.mAccessToken);
+                    return headers;
+                }
+            };
+            AppSingleton.getInstance(context).addToRequestQueue(jsObjRequest);
         }
-                ;
-        AppSingleton.getInstance(context).addToRequestQueue(jsObjRequest);
-    }
-
-    public void getEvenMoreTrackInfo(final String albumName , final String artistName , String url , final String name , final String duration , final String explicit , final String popularity , Context context){
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest
-                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            ArrayList<String> genres = new ArrayList<String>();
-                             JSONArray genresJSON = response.getJSONArray("genres");
-                             for (int i = 0; i < genresJSON.length();i++){
-                                 genres.add(genresJSON.getString(i));
-                             }
-                            trackList.add(new Tracks(name, albumName,artistName,duration,explicit,popularity,genres));
-                            System.out.println(trackList.get(0).getName());
-
-                        }
-                        catch (JSONException e){
-
-                        }
-                    }
-                }, new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // TODO Auto-generated method stub
-                    }
-                }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<String, String>();
-                //headers.put("Content-Type", "application/json");
-                headers.put("Authorization","Bearer " + MainActivity.mAccessToken);
-                return headers;
-            }
-        }
-                ;
-        AppSingleton.getInstance(context).addToRequestQueue(jsObjRequest);
-    }
-
-
     @Override
     public int describeContents() {
         return 0;

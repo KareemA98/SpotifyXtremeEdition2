@@ -17,9 +17,11 @@ public Playlists movie;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pick_sub_category);
         movie = getIntent().getParcelableExtra("Parcel Data");
+        movie.getTracks("https://api.spotify.com/v1/users/"+ movie.getUserId() + "/playlists/"+ movie.getId() + "/tracks",getApplicationContext());
+
         genre = findViewById(R.id.Genre);
     }
     public void sendMessage(View view) {
-        System.out.println(movie.trackList.get(0).getName());
+        System.out.println(movie.getTrackList().get(1640).getName());
     }
 }

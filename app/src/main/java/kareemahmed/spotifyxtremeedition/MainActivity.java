@@ -2,6 +2,7 @@ package kareemahmed.spotifyxtremeedition;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
@@ -43,7 +44,12 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        getAuthentication();
+        AuthenticationRequest.Builder builder =
+                new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
+        builder.setScopes(new String[]{"user-read-private","playlist-read-private","streaming"});
+        AuthenticationRequest request = builder.build();
+        AuthenticationClient.openLoginInBrowser(this ,request);
+        //getAuthentication();
         mAdapter = new MoviesAdapter(playlistlist,getApplicationContext());
         recyclerView.setHasFixedSize(true);
         // vertical RecyclerView
@@ -57,20 +63,20 @@ public class MainActivity extends Activity {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
 }
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
 
-
-    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        super.onActivityResult(requestCode, resultCode, intent);
-
-        // Check if result comes from the correct activity
-        if (requestCode == REQUEST_CODE) {
-            AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
-            mAccessToken = response.getAccessToken();
+        Uri uri = intent.getData();
+        if (uri != null) {
+            AuthenticationResponse response = AuthenticationResponse.fromUri(uri);
 
             switch (response.getType()) {
                 // Response was successful and contains auth token
                 case TOKEN:
                     // Handle successful response
+                    mAccessToken = response.getAccessToken();
+                    System.out.println(response.getAccessToken());
                     break;
 
                 // Auth flow returned an error
@@ -84,12 +90,11 @@ public class MainActivity extends Activity {
             }
         }
     }
+
+
     @Override
     public void onResume() {
         super.onResume();  // Always call the superclass method first
-        if ( (System.currentTimeMillis()%1000) - AuthTimer  > 60) {
-            getAuthentication();
-        }
         String url = "https://api.spotify.com/v1/me/playlists";
         getUserPlaylists(url);
     }
@@ -136,11 +141,11 @@ public class MainActivity extends Activity {
         AppSingleton.getInstance(this).addToRequestQueue(jsObjRequest);
     }
     public void getAuthentication() {
-        AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
-        builder.setScopes(new String[]{"user-read-private","playlist-read-private"});
+        AuthenticationRequest.Builder builder =
+                new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
+        builder.setScopes(new String[]{"user-read-private","playlist-read-private","streaming"});
         AuthenticationRequest request = builder.build();
-        AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
-        AuthTimer = System.currentTimeMillis()%1000;
+        AuthenticationClient.openLoginInBrowser(this ,request);
     }
 
 }
