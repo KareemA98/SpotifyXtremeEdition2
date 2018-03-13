@@ -27,6 +27,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 public class MainActivity extends Activity {
@@ -38,7 +39,8 @@ public class MainActivity extends Activity {
     private static final int REQUEST_CODE = 1337;
     private Long AuthTimer;
     public static String mAccessToken;
-
+    public static ArrayList<String> genresLookup = new ArrayList<String>();
+    public static ArrayList<Genres> genreHolder = new ArrayList<Genres>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +64,7 @@ public class MainActivity extends Activity {
         // recyclerView.addItemDecoration(new MyDividerItemDecoration(this, LinearLayoutManager.VERTICAL, 16));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
+        genreArray();
 }
     @Override
     protected void onNewIntent(Intent intent) {
@@ -146,6 +149,40 @@ public class MainActivity extends Activity {
         builder.setScopes(new String[]{"user-read-private","playlist-read-private","streaming"});
         AuthenticationRequest request = builder.build();
         AuthenticationClient.openLoginInBrowser(this ,request);
+    }
+
+    public void genreArray() {
+        String url = "https://api.spotify.com/v1/recommendations/available-genre-seeds";
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest
+                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONArray genreArray = response.getJSONArray("genres");
+                            for (int i = 0; i < genreArray.length(); i++) {
+                                genresLookup.add(genreArray.getString(i));
+                                genreHolder.add(new Genres());
+                            }
+                            mAdapter.notifyDataSetChanged();
+                        } catch (JSONException e) {
+
+                        }
+                    }
+                }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO Auto-generated method stub
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                //headers.put("Content-Type", "application/json");
+                headers.put("Authorization", "Bearer " + mAccessToken);
+                return headers;
+            }
+        };
     }
 
 }

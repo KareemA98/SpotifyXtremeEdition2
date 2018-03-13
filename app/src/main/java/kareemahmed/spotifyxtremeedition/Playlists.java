@@ -159,13 +159,14 @@ public class Playlists implements Parcelable {
                                 for(int i = 0;i <50 ; i++){
                                 ArrayList<String> genres= new ArrayList<String>();
                                 JSONArray genresJSON = response.getJSONArray("artists").getJSONObject(i).getJSONArray("genres");
-                                for (int j = 0; j < genresJSON.length();j++){
-                                    System.out.println("in genres");
-                                    genres.add(genresJSON.getString(j));
-                                }
                                 String artistName = response.getJSONArray("artists").getJSONObject(i).getString("name");
-                                trackList.add(new Tracks(name.get(i).toString(), albums.get(i).toString(),artistName , releases.get(i).toString(),
-                                        durations.get(i).toString(),explicits.get(i).toString(),popularity.get(i).toString(),genres));
+                                Tracks tracks = new Tracks(name.get(i).toString(), albums.get(i).toString(),artistName , releases.get(i).toString(),
+                                        durations.get(i).toString(),explicits.get(i).toString(),popularity.get(i).toString(),genres);
+                                    for (int j = 0; j < genresJSON.length();j++) {
+                                        int found = MainActivity.genresLookup.indexOf(genresJSON.getString(j));
+                                        System.out.println(found);
+                                        MainActivity.genreHolder.get(found).addTrack(tracks);
+                                    }
                                 System.out.println("Tracks added ");
                                 }
 
@@ -190,6 +191,11 @@ public class Playlists implements Parcelable {
             };
             AppSingleton.getInstance(context).addToRequestQueue(jsObjRequest);
         }
+
+        public void assignGenres(){
+
+        }
+
     @Override
     public int describeContents() {
         return 0;
