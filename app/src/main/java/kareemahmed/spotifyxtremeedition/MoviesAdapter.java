@@ -2,26 +2,17 @@ package kareemahmed.spotifyxtremeedition;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageRequest;
 import com.squareup.picasso.Picasso;
-import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.EditText;
+
 import java.util.List;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MyViewHolder> {
@@ -36,7 +27,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MyViewHold
 
         public MyViewHolder(View view) {
             super(view);
-            name = (TextView) view.findViewById(R.id.title);
+            name = (TextView) view.findViewById(R.id.genre);
             trackNumber = (TextView) view.findViewById(R.id.amountOfSongs);
             image = (ImageView) view.findViewById(R.id.cover);
             relativeLayout = (RelativeLayout) view.findViewById(R.id.relativelayout);

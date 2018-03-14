@@ -8,12 +8,24 @@ import java.util.ArrayList;
 
 public class Genres {
     private ArrayList<Tracks> songs = new ArrayList<Tracks>();
-
-    public Genres(){
-
+    private String name;
+    public Genres(String name){
+        this.name = name;
     }
 
     public void addTrack(Tracks adder) {
         songs.add(adder);
+    }
+
+    public ArrayList<Tracks> returnSongs(){
+        return songs;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getSize() {
+        return songs.size();
     }
 }

@@ -157,16 +157,23 @@ public class Playlists implements Parcelable {
                         public void onResponse(JSONObject response) {
                             try {
                                 for(int i = 0;i <50 ; i++){
+
                                 ArrayList<String> genres= new ArrayList<String>();
                                 JSONArray genresJSON = response.getJSONArray("artists").getJSONObject(i).getJSONArray("genres");
                                 String artistName = response.getJSONArray("artists").getJSONObject(i).getString("name");
+                                String artistid = response.getJSONArray("artists").getJSONObject(i).getString("id");
                                 Tracks tracks = new Tracks(name.get(i).toString(), albums.get(i).toString(),artistName , releases.get(i).toString(),
                                         durations.get(i).toString(),explicits.get(i).toString(),popularity.get(i).toString(),genres);
-                                    for (int j = 0; j < genresJSON.length();j++) {
-                                        int found = MainActivity.genresLookup.indexOf(genresJSON.getString(j));
-                                        System.out.println(found);
-                                        MainActivity.genreHolder.get(found).addTrack(tracks);
-                                    }
+                                trackList.add(tracks);
+                                if (MainActivity.artistLookup.contains(artistid)){
+                                    int found = MainActivity.artistLookup.indexOf(artistid);
+                                    MainActivity.artistHolder.get(found).addTracks(tracks);
+                                }
+                                else {
+                                    Artist artist = new Artist(genresJSON);
+                                    MainActivity.artistLookup.add(artistid);
+                                    MainActivity.artistHolder.add(artist);
+                                }
                                 System.out.println("Tracks added ");
                                 }
 

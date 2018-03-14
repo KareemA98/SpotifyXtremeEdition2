@@ -1,8 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/relativelayout"
+    android:id="@+id/genreRelativelayout"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
@@ -14,31 +12,28 @@
         android:id="@+id/genre"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/cover"
-        android:layout_toRightOf="@+id/cover"
+        android:layout_toLeftOf="@+id/checkBox"
+        android:layout_toStartOf="@+id/checkBox"
         android:textColor="@color/title"
         android:textSize="16sp"
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/amountOfSongs"
+        android:id="@+id/genreSongs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/genre"
-        android:layout_toEndOf="@+id/cover"
-        android:layout_toRightOf="@+id/cover" />
+        android:layout_toLeftOf="@+id/checkBox"
+        android:layout_toStartOf="@+id/checkBox" />
 
-    <ImageView
-        android:id="@+id/cover"
+    <CheckBox
+        android:id="@+id/checkBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:scaleType="centerInside"
-        android:src="@mipmap/ic_launcher" />
+        android:text="CheckBox" />
 
 </RelativeLayout>
