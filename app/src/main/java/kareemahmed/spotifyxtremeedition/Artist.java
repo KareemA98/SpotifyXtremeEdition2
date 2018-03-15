@@ -4,21 +4,34 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Created by krimb on 14/03/2018.
  */
 public class Artist {
-    public static ArrayList<Integer> genreNumbers = new ArrayList<Integer>();
-        public Artist(JSONArray genres) {
+    private ArrayList<Integer> genreNumbers = new ArrayList<Integer>();
+    private String id;
+        public Artist(String id , JSONArray genres,Tracks tracks) {
+            this.id = id;
             for(int i = 0 ; i < genres.length(); i++){
-                try{
-                    if (MainActivity.genresLookup.contains(genres.getString(i))){
-                        genreNumbers.add(MainActivity.genresLookup.indexOf(genres.getString(i)));
+                try {
+                    Iterator itr = MainActivity.genreHolder.iterator();
+                    Boolean compare = true;
+                    int counter = 0;
+                    while (itr.hasNext()) {
+                        Genres genre = (Genres) itr.next();
+                        if (genre.compareName(genres.get(i).toString())) {
+                            genreNumbers.add(counter);
+                            compare = false;
+                            break;
+                        }
+                        counter++;
                     }
-                    else{
-                        MainActivity.genresLookup.add(genres.getString(i));
-                        MainActivity.genreHolder.add(new Genres(genres.getString(i)));
+                    if(compare){
+                        Genres genre = new Genres(genres.get(i).toString());
+                        genre.addTrack(tracks);
+                        MainActivity.genreHolder.add(genre);
                     }
                 }
                 catch (JSONException e){
@@ -31,5 +44,15 @@ public class Artist {
             for (int i = 0; i < genreNumbers.size(); i++) {
                 MainActivity.genreHolder.get(genreNumbers.get(i)).addTrack(tracks);
             }
+        }
+
+        public boolean compareId(String artistid){
+            if(id.equals(artistid)){
+                return true;
+            }
+            else {
+                return false;
+            }
+
         }
 }

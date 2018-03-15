@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Spotify Xtreme Edition</string>
     <string name="Name">There\'s an issue</string>
+    <string name="genre">Genres</string>
 </resources>

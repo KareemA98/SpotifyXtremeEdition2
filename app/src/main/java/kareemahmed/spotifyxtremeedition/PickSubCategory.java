@@ -11,23 +11,33 @@ import android.view.View;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 public class PickSubCategory extends Activity {
 public TextView genre;
 public Playlists movie;
-    private RecyclerView recyclerView;
-    private GenreAdapter gAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pick_sub_category);
         movie = getIntent().getParcelableExtra("Parcel Data");
-        MainActivity.genresLookup.clear();
+        MainActivity.artistHolder.clear();
         MainActivity.genreHolder.clear();
         movie.getTracks("https://api.spotify.com/v1/users/"+ movie.getUserId() + "/playlists/"+ movie.getId() + "/tracks",getApplicationContext());
+
+    }
+    @Override
+    public void onResume() {
+        super.onResume();  // Always call the superclass method first
+    }
+    public void sendMessage(View view) {
+        ArrayList<Genres> sortedGenres = (ArrayList<Genres>)MainActivity.genreHolder.clone();
+        Collections.sort(sortedGenres);
+        RecyclerView recyclerView;
+        GenreAdapter gAdapter;
         recyclerView = (RecyclerView) findViewById(R.id.genreRecycle);
-        gAdapter = new GenreAdapter(MainActivity.genreHolder,getApplicationContext());
+        gAdapter = new GenreAdapter(sortedGenres,getApplicationContext());
         recyclerView.setHasFixedSize(true);
         // vertical RecyclerView
         // keep movie_list_row.xml width to `match_parent`
@@ -40,9 +50,8 @@ public Playlists movie;
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(gAdapter);
     }
-    public void sendMessage(View view) {
-        Genres genre = MainActivity.genreHolder.get(8);
-        ArrayList<Tracks> songs = genre.returnSongs();
-        System.out.println(songs.get(0).getName());
+
+    public void dateRecorded() {
+        
     }
 }

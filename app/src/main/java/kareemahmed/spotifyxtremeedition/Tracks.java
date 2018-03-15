@@ -7,10 +7,9 @@ import java.util.ArrayList;
  */
 
 public class Tracks {
-    String name, artistName, albumName , explicit , duration , popularity,release;
-    ArrayList<String> genres;
+    private String name, artistName, albumName , explicit , duration , popularity,release;
 
-    public Tracks(String name, String albumName , String artistName , String release, String duration , String explicit , String popularity , ArrayList<String> genres) {
+    public Tracks(String name, String albumName , String artistName , String release, String duration , String explicit , String popularity) {
         this.name = name;
         this.albumName = albumName;
         this.artistName = artistName;
@@ -18,7 +17,6 @@ public class Tracks {
         this.duration = duration;
         this.explicit = explicit;
         this.popularity = popularity;
-        this.genres = genres;
     }
     public String getName(){return name;}
 }

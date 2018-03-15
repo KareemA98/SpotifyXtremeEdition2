@@ -20,6 +20,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -29,7 +30,7 @@ import java.util.Map;
 public class Playlists implements Parcelable {
     private String name,trackNumber,image,id,userId;
     private MoviesAdapter mAdapter;
-    private ArrayList<Tracks> trackList = new ArrayList<Tracks>();
+    public ArrayList<Tracks> trackList = new ArrayList<Tracks>();
     public Playlists() {
 
     }
@@ -102,7 +103,6 @@ public class Playlists implements Parcelable {
                             try {
                                 System.out.println("responce");
                                 String artisturls = "";
-                                String artisturls2 = "";
                                 ArrayList<String> names = new ArrayList<String>();
                                 ArrayList<String> albums = new ArrayList<String>();
                                 ArrayList<String> releases = new ArrayList<String>();
@@ -157,23 +157,26 @@ public class Playlists implements Parcelable {
                         public void onResponse(JSONObject response) {
                             try {
                                 for(int i = 0;i <50 ; i++){
-
-                                ArrayList<String> genres= new ArrayList<String>();
                                 JSONArray genresJSON = response.getJSONArray("artists").getJSONObject(i).getJSONArray("genres");
                                 String artistName = response.getJSONArray("artists").getJSONObject(i).getString("name");
                                 String artistid = response.getJSONArray("artists").getJSONObject(i).getString("id");
                                 Tracks tracks = new Tracks(name.get(i).toString(), albums.get(i).toString(),artistName , releases.get(i).toString(),
-                                        durations.get(i).toString(),explicits.get(i).toString(),popularity.get(i).toString(),genres);
+                                        durations.get(i).toString(),explicits.get(i).toString(),popularity.get(i).toString());
                                 trackList.add(tracks);
-                                if (MainActivity.artistLookup.contains(artistid)){
-                                    int found = MainActivity.artistLookup.indexOf(artistid);
-                                    MainActivity.artistHolder.get(found).addTracks(tracks);
-                                }
-                                else {
-                                    Artist artist = new Artist(genresJSON);
-                                    MainActivity.artistLookup.add(artistid);
-                                    MainActivity.artistHolder.add(artist);
-                                }
+                                    Iterator itr=MainActivity.artistHolder.iterator();
+                                    Boolean compare = true;
+                                    while(itr.hasNext()){
+                                        Artist art = (Artist) itr.next();
+                                        if(art.compareId(artistid)){
+                                            art.addTracks(tracks);
+                                            compare = false;
+                                            break;
+                                        }
+                                    }
+                                    if(compare){
+                                        Artist artist = new Artist(artistid,genresJSON,tracks);
+                                        MainActivity.artistHolder.add(artist);
+                                    }
                                 System.out.println("Tracks added ");
                                 }
 
