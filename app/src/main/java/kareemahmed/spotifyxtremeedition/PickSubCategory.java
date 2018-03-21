@@ -21,6 +21,8 @@ public Playlists movie;
 private ArrayList<Popularity> popularities = new ArrayList<Popularity>();
 private ArrayList<Explicit> explcits = new ArrayList<Explicit>();
 private ArrayList<Length> lengths = new ArrayList<Length>(); //ToDo
+private ArrayList<Years> years = new ArrayList<>();
+
     private Boolean filtered = false;
 
     @Override
@@ -39,6 +41,7 @@ private ArrayList<Length> lengths = new ArrayList<Length>(); //ToDo
     public void sendMessage(View view) {
         ArrayList<Genres> sortedGenres = (ArrayList<Genres>)MainActivity.genreHolder.clone();
         Collections.sort(sortedGenres);
+        MainActivity.artistHolder.size();
         RecyclerView recyclerView;
         GenreAdapter gAdapter;
         recyclerView = (RecyclerView) findViewById(R.id.genreRecycle);
@@ -95,6 +98,46 @@ private ArrayList<Length> lengths = new ArrayList<Length>(); //ToDo
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(pAdapter);
     }
+    public void setLengths(View view) {
+        if (!filtered) {
+            filtersMade();
+        }
+        RecyclerView recyclerView;
+        LengthAdapter lAdapter;
+        recyclerView = (RecyclerView) findViewById(R.id.genreRecycle);
+        lAdapter = new LengthAdapter(lengths,getApplicationContext());
+        recyclerView.setHasFixedSize(true);
+        // vertical RecyclerView
+        // keep movie_list_row.xml width to `match_parent`
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setLayoutManager(mLayoutManager);
+        // adding inbuilt divider line
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+        // adding custom divider line with padding 16dp
+        // recyclerView.addItemDecoration(new MyDividerItemDecoration(this, LinearLayoutManager.VERTICAL, 16));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(lAdapter);
+    }
+    public void setYears(View view){
+        if (!filtered) {
+            filtersMade();
+        }
+        RecyclerView recyclerView;
+        YearsAdapter yAdapter;
+        recyclerView = (RecyclerView) findViewById(R.id.genreRecycle);
+        yAdapter = new YearsAdapter(years,getApplicationContext());
+        recyclerView.setHasFixedSize(true);
+        // vertical RecyclerView
+        // keep movie_list_row.xml width to `match_parent`
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setLayoutManager(mLayoutManager);
+        // adding inbuilt divider line
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+        // adding custom divider line with padding 16dp
+        // recyclerView.addItemDecoration(new MyDividerItemDecoration(this, LinearLayoutManager.VERTICAL, 16));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(yAdapter);
+    }
     public void filtersMade() {
         ArrayList<Tracks> trackList = movie.trackList;
         Iterator itr = trackList.iterator();
@@ -115,8 +158,9 @@ private ArrayList<Length> lengths = new ArrayList<Length>(); //ToDo
             popularityFilter(track);
             explicitFiler(track);
             durationFilter(track);
-           // releaseFilter();
+            yearFilter(track);
         }
+        Collections.sort(years);
         filtered = true;
     }
     public void popularityFilter(Tracks tracks){
@@ -145,7 +189,7 @@ private ArrayList<Length> lengths = new ArrayList<Length>(); //ToDo
     }
     public void durationFilter(Tracks tracks){
         int duration = tracks.getDuration();
-        if(duration >= 30000){
+        if(duration >= 300000){
             lengths.get(0).addTracks(tracks);
         }
         else if (duration >= 240000 ){
@@ -161,4 +205,25 @@ private ArrayList<Length> lengths = new ArrayList<Length>(); //ToDo
             lengths.get(4).addTracks(tracks);
         }
     }
+    public void yearFilter(Tracks tracks){
+        String date = tracks.getRelease();
+        date = date.substring(0,4);
+        Iterator itr = years.iterator();
+        Boolean compare = true;
+        int counter = 0;
+        while (itr.hasNext()) {
+            Years year = (Years) itr.next();
+            if (year.compareYear(date)) {
+                years.get(counter).addTrack(tracks);
+                compare = false;
+            }
+            counter++;
+        }
+        if (compare) {
+            Years year = new Years(date);
+            year.addTrack(tracks);
+            years.add(year);
+        }
+    }
+
 }

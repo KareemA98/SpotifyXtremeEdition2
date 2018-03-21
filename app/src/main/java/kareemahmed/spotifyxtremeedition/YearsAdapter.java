@@ -14,9 +14,10 @@ import java.util.List;
 /**
  * Created by krimb on 21/03/2018.
  */
-public class PopularityAdapter extends RecyclerView.Adapter<PopularityAdapter.MyViewHolder> {
 
-    private List<Popularity> genreList;
+public class YearsAdapter extends RecyclerView.Adapter<YearsAdapter.MyViewHolder> {
+
+    private List<Years> genreList;
     private Context context;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
@@ -33,7 +34,7 @@ public class PopularityAdapter extends RecyclerView.Adapter<PopularityAdapter.My
         }
     }
 
-    public PopularityAdapter(List<Popularity> genreList, Context context) {
+    public YearsAdapter(List<Years> genreList, Context context) {
         this.genreList = genreList;
         this.context = context;
     }
@@ -48,7 +49,7 @@ public class PopularityAdapter extends RecyclerView.Adapter<PopularityAdapter.My
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        final Popularity genre = genreList.get(position);
+        final Years genre = genreList.get(position);
         holder.genre.setText(genre.getName());
         holder.genreSongs.setText(genre.getSize());
     }

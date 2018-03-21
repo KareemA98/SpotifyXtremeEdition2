@@ -23,4 +23,5 @@ public class Tracks {
     public int getPopularity(){return popularity;}
     public int getDuration(){return duration;}
     public boolean getExplicit(){return Boolean.parseBoolean(explicit);}
+    public String getRelease() {return release;}
 }

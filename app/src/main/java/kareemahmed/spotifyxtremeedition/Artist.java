@@ -24,7 +24,6 @@ public class Artist {
                         if (genre.compareName(genres.get(i).toString())) {
                             genreNumbers.add(counter);
                             compare = false;
-                            break;
                         }
                         counter++;
                     }
@@ -32,6 +31,7 @@ public class Artist {
                         Genres genre = new Genres(genres.get(i).toString());
                         genre.addTrack(tracks);
                         MainActivity.genreHolder.add(genre);
+                        genreNumbers.add(genreNumbers.size());
                     }
                 }
                 catch (JSONException e){

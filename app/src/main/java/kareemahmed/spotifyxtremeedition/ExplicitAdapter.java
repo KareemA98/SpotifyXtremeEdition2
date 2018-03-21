@@ -27,10 +27,10 @@ public class ExplicitAdapter extends RecyclerView.Adapter<ExplicitAdapter.MyView
 
         public MyViewHolder(View view) {
             super(view);
-            genre = (TextView) view.findViewById(R.id.genre);
-            genreSongs = (TextView) view.findViewById(R.id.genreSongs);
+            genre = (TextView) view.findViewById(R.id.filterTitle);
+            genreSongs = (TextView) view.findViewById(R.id.filterSongs);
             checkBox = (CheckBox) view.findViewById(R.id.checkBox);
-            relativeLayout = (RelativeLayout) view.findViewById(R.id.genreRelativelayout);
+            relativeLayout = (RelativeLayout) view.findViewById(R.id.filterRelativelayout);
         }
     }
 
@@ -42,7 +42,7 @@ public class ExplicitAdapter extends RecyclerView.Adapter<ExplicitAdapter.MyView
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.genre_list_row, parent, false);
+                .inflate(R.layout.filter_list_row, parent, false);
 
         return new MyViewHolder(itemView);
     }

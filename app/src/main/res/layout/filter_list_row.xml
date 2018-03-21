@@ -1,6 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/genreRelativelayout"
+    android:id="@+id/filterRelativelayout"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
@@ -9,7 +9,7 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/genre"
+        android:id="@+id/filterTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -20,10 +20,10 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/genreSongs"
+        android:id="@+id/filterSongs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/genre"
+        android:layout_below="@id/filterTitle"
         android:layout_toLeftOf="@+id/checkBox"
         android:layout_toStartOf="@+id/checkBox" />
 

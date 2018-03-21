@@ -27,7 +27,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MyViewHold
 
         public MyViewHolder(View view) {
             super(view);
-            name = (TextView) view.findViewById(R.id.genre);
+            name = (TextView) view.findViewById(R.id.filterTitle);
             trackNumber = (TextView) view.findViewById(R.id.amountOfSongs);
             image = (ImageView) view.findViewById(R.id.cover);
             relativeLayout = (RelativeLayout) view.findViewById(R.id.relativelayout);
@@ -58,12 +58,12 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MyViewHold
                 .resize(300,300)
                 .into(holder.image);
         holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(context,"You clicked "+movie.getName(), Toast.LENGTH_LONG).show();
-                Intent intent = new Intent(context, PickSubCategory.class);
-                intent.putExtra("Parcel Data",movie);
-                context.startActivity(intent);
+                    @Override
+                    public void onClick(View view) {
+                        Toast.makeText(context,"You clicked "+movie.getName(), Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(context, PickSubCategory.class);
+                        intent.putExtra("Parcel Data",movie);
+                        context.startActivity(intent);
             }
         });
     }

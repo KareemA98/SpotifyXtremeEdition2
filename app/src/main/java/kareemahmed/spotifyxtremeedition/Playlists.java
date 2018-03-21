@@ -95,7 +95,7 @@ public class Playlists implements Parcelable {
         int amountOfSongs = Integer.parseInt(trackNumber);
         int offset = 0;
         do {
-            String newUrl = (url + "?limit=50&?offset=" + offset);
+                String newUrl = (url + "?offset=" + offset + "&limit=50");
             JsonObjectRequest jsObjRequest = new JsonObjectRequest
                     (Request.Method.GET, newUrl, null, new Response.Listener<JSONObject>() {
                         @Override
@@ -156,26 +156,31 @@ public class Playlists implements Parcelable {
                         @Override
                         public void onResponse(JSONObject response) {
                             try {
-                                for(int i = 0;i <50 ; i++){
+                                JSONArray artists = response.getJSONArray("artists");
+                                for(int i = 0;i <artists.length() ; i++){
                                 JSONArray genresJSON = response.getJSONArray("artists").getJSONObject(i).getJSONArray("genres");
                                 String artistName = response.getJSONArray("artists").getJSONObject(i).getString("name");
                                 String artistid = response.getJSONArray("artists").getJSONObject(i).getString("id");
                                 Tracks tracks = new Tracks(name.get(i).toString(), albums.get(i).toString(),artistName , releases.get(i).toString(),
                                         durations.get(i).toString(),explicits.get(i).toString(),popularity.get(i).toString());
                                 trackList.add(tracks);
-                                    Iterator itr=MainActivity.artistHolder.iterator();
-                                    Boolean compare = true;
-                                    while(itr.hasNext()){
-                                        Artist art = (Artist) itr.next();
-                                        if(art.compareId(artistid)){
-                                            art.addTracks(tracks);
-                                            compare = false;
-                                            break;
+                                    for(int j = 0 ; j < genresJSON.length(); j++) {
+                                        Iterator itr = MainActivity.genreHolder.iterator();
+                                        Boolean compare = true;
+                                        int counter = 0;
+                                        while (itr.hasNext()) {
+                                            Genres genre = (Genres) itr.next();
+                                            if (genre.compareName(genresJSON.getString(j))) {
+                                                MainActivity.genreHolder.get(counter).addTrack(tracks);
+                                                compare = false;
+                                            }
+                                            counter++;
                                         }
-                                    }
-                                    if(compare){
-                                        Artist artist = new Artist(artistid,genresJSON,tracks);
-                                        MainActivity.artistHolder.add(artist);
+                                        if (compare) {
+                                            Genres genre = new Genres(genresJSON.getString(j));
+                                            genre.addTrack(tracks);
+                                            MainActivity.genreHolder.add(genre);
+                                        }
                                     }
                                 System.out.println("Tracks added ");
                                 }

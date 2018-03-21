@@ -11,7 +11,7 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/genre"
+        android:id="@+id/filterTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
@@ -27,7 +27,7 @@
         android:id="@+id/amountOfSongs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/genre"
+        android:layout_below="@id/filterTitle"
         android:layout_toEndOf="@+id/cover"
         android:layout_toRightOf="@+id/cover" />
 

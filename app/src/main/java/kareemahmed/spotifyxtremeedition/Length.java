@@ -20,4 +20,6 @@ public class Length {
     public String getSize() {
         return Integer.toString(songs.size());
     }
+
+    public String getName() {return name;}
 }
