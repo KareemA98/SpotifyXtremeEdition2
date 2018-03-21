@@ -202,10 +202,6 @@ public class Playlists implements Parcelable {
             AppSingleton.getInstance(context).addToRequestQueue(jsObjRequest);
         }
 
-        public void assignGenres(){
-
-        }
-
     @Override
     public int describeContents() {
         return 0;

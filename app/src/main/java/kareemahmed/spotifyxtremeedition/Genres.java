@@ -9,6 +9,7 @@ import java.util.ArrayList;
 public class Genres implements Comparable<Genres> {
     private ArrayList<Tracks> songs = new ArrayList<Tracks>();
     private String name;
+    private Boolean selected = false;
     public Genres(String name){
         this.name = name;
     }
@@ -40,6 +41,13 @@ public class Genres implements Comparable<Genres> {
         else{
             return false;
         }
+    }
+
+    public Boolean isSelected() {
+        return selected;
+    }
+    public void setChecked(boolean checked) {
+        selected = checked;
     }
 
     public int compareTo(Genres genres){

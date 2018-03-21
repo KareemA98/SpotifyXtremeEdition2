@@ -2,4 +2,9 @@
     <string name="app_name">Spotify Xtreme Edition</string>
     <string name="Name">There\'s an issue</string>
     <string name="genre">Genres</string>
+    <string name="Explicits">Explicits</string>
+    <string name="Popularity">Popularity</string>
+    <string name="Duration">Duration</string>
+    <string name="Release">Release</string>
+    <string name="Submit">Submit</string>
 </resources>
