@@ -38,10 +38,6 @@ public class MainActivity extends Activity {
     private static final String REDIRECT_URI = "my-spotify-app-login://callback";
     private static final int REQUEST_CODE = 1337;
     public static String mAccessToken;
-    public static ArrayList<String> genresLookup = new ArrayList<String>();
-    public static ArrayList<Genres> genreHolder = new ArrayList<Genres>();
-    public static ArrayList<String> artistLookup = new ArrayList<String>();
-    public static ArrayList<Artist> artistHolder = new ArrayList<Artist>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +45,8 @@ public class MainActivity extends Activity {
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         AuthenticationRequest.Builder builder =
                 new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
-        builder.setScopes(new String[]{"user-read-private","playlist-read-private","streaming"});
+        builder.setScopes(new String[]{"user-read-private","playlist-read-private"});
+        builder.setShowDialog(true);
         AuthenticationRequest request = builder.build();
         AuthenticationClient.openLoginInBrowser(this ,request);
         //getAuthentication();

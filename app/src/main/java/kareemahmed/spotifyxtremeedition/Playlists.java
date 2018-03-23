@@ -161,27 +161,15 @@ public class Playlists implements Parcelable {
                                 JSONArray genresJSON = response.getJSONArray("artists").getJSONObject(i).getJSONArray("genres");
                                 String artistName = response.getJSONArray("artists").getJSONObject(i).getString("name");
                                 String artistid = response.getJSONArray("artists").getJSONObject(i).getString("id");
-                                Tracks tracks = new Tracks(name.get(i).toString(), albums.get(i).toString(),artistName , releases.get(i).toString(),
-                                        durations.get(i).toString(),explicits.get(i).toString(),popularity.get(i).toString());
-                                trackList.add(tracks);
-                                    for(int j = 0 ; j < genresJSON.length(); j++) {
-                                        Iterator itr = MainActivity.genreHolder.iterator();
-                                        Boolean compare = true;
-                                        int counter = 0;
-                                        while (itr.hasNext()) {
-                                            Genres genre = (Genres) itr.next();
-                                            if (genre.compareName(genresJSON.getString(j))) {
-                                                MainActivity.genreHolder.get(counter).addTrack(tracks);
-                                                compare = false;
-                                            }
-                                            counter++;
-                                        }
-                                        if (compare) {
-                                            Genres genre = new Genres(genresJSON.getString(j));
-                                            genre.addTrack(tracks);
-                                            MainActivity.genreHolder.add(genre);
-                                        }
+                                ArrayList<String> list = new ArrayList<String>();
+                                if(genresJSON != null){
+                                    for (int j = 0 ; j < genresJSON.length();j++){
+                                        list.add(genresJSON.get(j).toString());
                                     }
+                                }
+                                Tracks tracks = new Tracks(name.get(i).toString(), albums.get(i).toString(),artistName , releases.get(i).toString(),
+                                        durations.get(i).toString(),explicits.get(i).toString(),popularity.get(i).toString(),list);
+                                trackList.add(tracks);
                                 System.out.println("Tracks added ");
                                 }
 

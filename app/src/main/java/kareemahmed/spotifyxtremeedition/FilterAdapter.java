@@ -6,35 +6,36 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.List;
 
 /**
- * Created by krimb on 21/03/2018.
+ * Created by krimb on 23/03/2018.
  */
 
-public class LengthAdapter extends RecyclerView.Adapter<LengthAdapter.MyViewHolder> {
+public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.MyViewHolder> {
 
-    private List<Length> genreList;
+    private List<Filter> genreList;
     private Context context;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView genre, genreSongs;
+        public TextView title, numberOfSongs;
         public CheckBox checkBox;
         public RelativeLayout relativeLayout;
 
         public MyViewHolder(View view) {
             super(view);
-            genre = (TextView) view.findViewById(R.id.filterTitle);
-            genreSongs = (TextView) view.findViewById(R.id.filterSongs);
+            title = (TextView) view.findViewById(R.id.filterTitle);
+            numberOfSongs = (TextView) view.findViewById(R.id.filterSongs);
             checkBox = (CheckBox) view.findViewById(R.id.checkBox);
             relativeLayout = (RelativeLayout) view.findViewById(R.id.filterRelativelayout);
         }
     }
 
-    public LengthAdapter(List<Length> genreList, Context context) {
+    public FilterAdapter(List<Filter> genreList , Context context) {
         this.genreList = genreList;
         this.context = context;
     }
@@ -49,13 +50,25 @@ public class LengthAdapter extends RecyclerView.Adapter<LengthAdapter.MyViewHold
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        final Length genre = genreList.get(position);
-        holder.genre.setText(genre.getName());
-        holder.genreSongs.setText(genre.getSize());
-    }
+        final Filter genre = genreList.get(position);
+        holder.title.setText(genre.getName());
+        holder.numberOfSongs.setText(genre.getSize());
+        //in some cases, it will prevent unwanted situations
+        holder.checkBox.setOnCheckedChangeListener(null);
 
+        //if true, your checkbox will be selected, else unselected
+        holder.checkBox.setChecked(genre.isSelected());
+        holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                //set your object's last status
+                genre.setChecked(isChecked);
+            }
+        });
+    }
     @Override
     public int getItemCount() {
         return genreList.size();
     }
 }
+

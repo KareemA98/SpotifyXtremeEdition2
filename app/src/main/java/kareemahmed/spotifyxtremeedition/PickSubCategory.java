@@ -10,18 +10,23 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 
 public class PickSubCategory extends Activity {
 public TextView genre;
 public Playlists movie;
-private ArrayList<Popularity> popularities = new ArrayList<Popularity>();
-private ArrayList<Explicit> explcits = new ArrayList<Explicit>();
-private ArrayList<Length> lengths = new ArrayList<Length>(); //ToDo
-private ArrayList<Years> years = new ArrayList<>();
+private ArrayList<Filter> popularities = new ArrayList<Filter>();
+private ArrayList<Filter> explcits = new ArrayList<Filter>();
+private ArrayList<Filter> lengths = new ArrayList<Filter>(); //ToDo
+private ArrayList<Filter> years = new ArrayList<>();
+private ArrayList<Filter> genres = new ArrayList<Filter>();
 
     private Boolean filtered = false;
 
@@ -30,62 +35,38 @@ private ArrayList<Years> years = new ArrayList<>();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pick_sub_category);
         movie = getIntent().getParcelableExtra("Parcel Data");
-        MainActivity.artistHolder.clear();
-        MainActivity.genreHolder.clear();
         movie.getTracks("https://api.spotify.com/v1/users/"+ movie.getUserId() + "/playlists/"+ movie.getId() + "/tracks",getApplicationContext());
     }
     @Override
     public void onResume() {
         super.onResume();  // Always call the superclass method first
     }
-    public void sendMessage(View view) {
-        ArrayList<Genres> sortedGenres = (ArrayList<Genres>)MainActivity.genreHolder.clone();
-        Collections.sort(sortedGenres);
-        MainActivity.artistHolder.size();
-        RecyclerView recyclerView;
-        GenreAdapter gAdapter;
-        recyclerView = (RecyclerView) findViewById(R.id.genreRecycle);
-        gAdapter = new GenreAdapter(sortedGenres,getApplicationContext());
-        recyclerView.setHasFixedSize(true);
-        // vertical RecyclerView
-        // keep movie_list_row.xml width to `match_parent`
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-        recyclerView.setLayoutManager(mLayoutManager);
-        // adding inbuilt divider line
-        recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
-        // adding custom divider line with padding 16dp
-        // recyclerView.addItemDecoration(new MyDividerItemDecoration(this, LinearLayoutManager.VERTICAL, 16));
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(gAdapter);
-    }
-    public void setExplcits(View view) {
+    public void setRecyclerView(View view) {
+        ArrayList<Filter> passArray = new ArrayList<>();
         if (!filtered) {
             filtersMade();
         }
-        RecyclerView recyclerView;
-        ExplicitAdapter eAdapter;
-        recyclerView = (RecyclerView) findViewById(R.id.genreRecycle);
-        eAdapter = new ExplicitAdapter(explcits,getApplicationContext());
-        recyclerView.setHasFixedSize(true);
-        // vertical RecyclerView
-        // keep movie_list_row.xml width to `match_parent`
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-        recyclerView.setLayoutManager(mLayoutManager);
-        // adding inbuilt divider line
-        recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
-        // adding custom divider line with padding 16dp
-        // recyclerView.addItemDecoration(new MyDividerItemDecoration(this, LinearLayoutManager.VERTICAL, 16));
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(eAdapter);
-    }
-    public void setPopularities(View view) {
-        if (!filtered) {
-            filtersMade();
+        switch (view.getId()) {
+            case (R.id.Genre):
+                passArray = genres;
+                break;
+            case (R.id.Explicits):
+                passArray = explcits;
+                break;
+            case (R.id.Popularity):
+                passArray = popularities;
+                break;
+            case (R.id.Release):
+                passArray = years;
+                break;
+            case (R.id.Duration):
+                passArray = lengths;
+                break;
         }
         RecyclerView recyclerView;
-        PopularityAdapter pAdapter;
+        FilterAdapter fAdapter;
         recyclerView = (RecyclerView) findViewById(R.id.genreRecycle);
-        pAdapter = new PopularityAdapter(popularities,getApplicationContext());
+        fAdapter = new FilterAdapter(passArray,getApplicationContext());
         recyclerView.setHasFixedSize(true);
         // vertical RecyclerView
         // keep movie_list_row.xml width to `match_parent`
@@ -96,71 +77,95 @@ private ArrayList<Years> years = new ArrayList<>();
         // adding custom divider line with padding 16dp
         // recyclerView.addItemDecoration(new MyDividerItemDecoration(this, LinearLayoutManager.VERTICAL, 16));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(pAdapter);
+        recyclerView.setAdapter(fAdapter);
     }
-    public void setLengths(View view) {
-        if (!filtered) {
-            filtersMade();
+    public void combining (View view) {
+        HashSet<Tracks> genreSet=new HashSet<Tracks>();
+        Iterator itr = genres.iterator();
+        while (itr.hasNext()){
+            Filter genre = (Filter) itr.next();
+            if (genre.isSelected()){
+                genreSet.addAll(genre.returnSongs());
+            }
         }
-        RecyclerView recyclerView;
-        LengthAdapter lAdapter;
-        recyclerView = (RecyclerView) findViewById(R.id.genreRecycle);
-        lAdapter = new LengthAdapter(lengths,getApplicationContext());
-        recyclerView.setHasFixedSize(true);
-        // vertical RecyclerView
-        // keep movie_list_row.xml width to `match_parent`
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-        recyclerView.setLayoutManager(mLayoutManager);
-        // adding inbuilt divider line
-        recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
-        // adding custom divider line with padding 16dp
-        // recyclerView.addItemDecoration(new MyDividerItemDecoration(this, LinearLayoutManager.VERTICAL, 16));
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(lAdapter);
-    }
-    public void setYears(View view){
-        if (!filtered) {
-            filtersMade();
+        HashSet<Tracks> explicitSet=new HashSet<Tracks>();
+        itr = explcits.iterator();
+        while (itr.hasNext()){
+            Filter explicit = (Filter) itr.next();
+            if (explicit.isSelected()){
+                explicitSet.addAll(explicit.returnSongs());
+            }
         }
-        RecyclerView recyclerView;
-        YearsAdapter yAdapter;
-        recyclerView = (RecyclerView) findViewById(R.id.genreRecycle);
-        yAdapter = new YearsAdapter(years,getApplicationContext());
-        recyclerView.setHasFixedSize(true);
-        // vertical RecyclerView
-        // keep movie_list_row.xml width to `match_parent`
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-        recyclerView.setLayoutManager(mLayoutManager);
-        // adding inbuilt divider line
-        recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
-        // adding custom divider line with padding 16dp
-        // recyclerView.addItemDecoration(new MyDividerItemDecoration(this, LinearLayoutManager.VERTICAL, 16));
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(yAdapter);
+        HashSet<Tracks> lengthSet=new HashSet<Tracks>();
+        itr = lengths.iterator();
+        while (itr.hasNext()){
+            Filter length = (Filter) itr.next();
+            if (length.isSelected()){
+                lengthSet.addAll(length.returnSongs());
+            }
+        }
+        HashSet<Tracks> popularitySet=new HashSet<Tracks>();
+        itr = popularities.iterator();
+        while (itr.hasNext()){
+            Filter popularity = (Filter) itr.next();
+            if (popularity.isSelected()){
+                popularitySet.addAll(popularity.returnSongs());
+            }
+        }
+        HashSet<Tracks> yearsSet=new HashSet<Tracks>();
+        itr = years.iterator();
+        while (itr.hasNext()){
+            Filter years = (Filter) itr.next();
+            if (years.isSelected()){
+                yearsSet.addAll(years.returnSongs());
+            }
+        }
+        HashSet<Tracks> finalSet = new HashSet<Tracks>();
+        finalSet.addAll(movie.trackList);
+        if (genreSet.size() > 0){
+            finalSet.retainAll(genreSet);
+        }
+        if(explicitSet.size() > 0){
+            finalSet.retainAll(explicitSet);
+        }
+        if(lengthSet.size() > 0){
+            finalSet.retainAll(lengthSet);
+        }
+        if(popularitySet.size() > 0){
+            finalSet.retainAll(popularitySet);
+        }
+        if (yearsSet.size() > 0){
+            finalSet.retainAll(yearsSet);
+        }
+        System.out.println("Kill me");
+        TextView answer;
+        answer = findViewById(R.id.answer);
+        answer.setText(Integer.toString(finalSet.size()));
     }
     public void filtersMade() {
         ArrayList<Tracks> trackList = movie.trackList;
         Iterator itr = trackList.iterator();
-        popularities.clear();
-        popularities.add(new Popularity("deep"));
-        popularities.add(new Popularity("indie"));
-        popularities.add(new Popularity("popular"));
-        popularities.add(new Popularity("very popular"));
-        explcits.add(new Explicit("Non-Explicit"));
-        explcits.add(new Explicit("Explicit"));
-        lengths.add(new Length("5+ Minutes"));
-        lengths.add(new Length("4 Minutes"));
-        lengths.add(new Length("3 Minutes"));
-        lengths.add(new Length("2 Minutes"));
-        lengths.add(new Length("less then 2 Minutes"));
+        popularities.add(new Filter("deep"));
+        popularities.add(new Filter("indie"));
+        popularities.add(new Filter("popular"));
+        popularities.add(new Filter("very popular"));
+        explcits.add(new Filter("Non-Explicit"));
+        explcits.add(new Filter("Explicit"));
+        lengths.add(new Filter("5+ Minutes"));
+        lengths.add(new Filter("4 Minutes"));
+        lengths.add(new Filter("3 Minutes"));
+        lengths.add(new Filter("2 Minutes"));
+        lengths.add(new Filter("less then 2 Minutes"));
         while (itr.hasNext()) {
             Tracks track = (Tracks) itr.next();
+            genreFilter(track);
             popularityFilter(track);
             explicitFiler(track);
             durationFilter(track);
             yearFilter(track);
         }
-        Collections.sort(years);
+        Collections.sort(genres);
+        //Collections.sort(years);
         filtered = true;
     }
     public void popularityFilter(Tracks tracks){
@@ -212,18 +217,39 @@ private ArrayList<Years> years = new ArrayList<>();
         Boolean compare = true;
         int counter = 0;
         while (itr.hasNext()) {
-            Years year = (Years) itr.next();
-            if (year.compareYear(date)) {
-                years.get(counter).addTrack(tracks);
+            Filter year = (Filter) itr.next();
+            if (year.compareName(date)) {
+                years.get(counter).addTracks(tracks);
                 compare = false;
             }
             counter++;
         }
         if (compare) {
-            Years year = new Years(date);
-            year.addTrack(tracks);
+            Filter year = new Filter(date);
+            year.addTracks(tracks);
             years.add(year);
         }
     }
-
+    public void genreFilter(Tracks tracks){
+        ArrayList<String> trackGenres = tracks.getGenres();
+        for(int i = 0 ; i < trackGenres.size(); i++) {
+            Iterator itr = genres.iterator();
+            Boolean compare = true;
+            int counter = 0;
+            while (itr.hasNext()) {
+                Filter genre = (Filter) itr.next();
+                if (genre.compareName(trackGenres.get(i))) {
+                    genres.get(counter).addTracks(tracks);
+                    compare = false;
+                    break;
+                }
+                counter++;
+            }
+            if (compare) {
+                Filter genre = new Filter(trackGenres.get(i));
+                genre.addTracks(tracks);
+                genres.add(genre);
+            }
+        }
+    }
 }

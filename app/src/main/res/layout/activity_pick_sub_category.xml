@@ -13,7 +13,7 @@
         android:layout_marginEnd="24dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
-        android:onClick="sendMessage"
+        android:onClick="setRecyclerView"
         android:text="@string/genre"
         app:layout_constraintEnd_toStartOf="@+id/genreRecycle"
         app:layout_constraintHorizontal_bias="0.134"
@@ -27,7 +27,7 @@
         android:layout_marginEnd="24dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="24dp"
-        android:onClick="setExplcits"
+        android:onClick="setRecyclerView"
         android:text="@string/Explicits"
         app:layout_constraintEnd_toStartOf="@+id/genreRecycle"
         app:layout_constraintHorizontal_bias="0.139"
@@ -35,13 +35,13 @@
         app:layout_constraintTop_toBottomOf="@+id/Genre" />
 
     <Button
-        android:id="@+id/BPM"
+        android:id="@+id/Popularity"
         android:layout_width="111dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="24dp"
-        android:onClick="setPopularities"
+        android:onClick="setRecyclerView"
         android:text="@string/Popularity"
         app:layout_constraintEnd_toStartOf="@+id/genreRecycle"
         app:layout_constraintHorizontal_bias="0.15"
@@ -49,18 +49,18 @@
         app:layout_constraintTop_toBottomOf="@+id/Explicits" />
 
     <Button
-        android:id="@+id/button4"
+        android:id="@+id/Release"
         android:layout_width="113dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="36dp"
-        android:onClick="setYears"
+        android:onClick="setRecyclerView"
         android:text="@string/Release"
         app:layout_constraintEnd_toStartOf="@+id/genreRecycle"
         app:layout_constraintHorizontal_bias="0.15"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/BPM" />
+        app:layout_constraintTop_toBottomOf="@+id/Popularity" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/genreRecycle"
@@ -76,17 +76,17 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/Duration"
         android:layout_width="102dp"
         android:layout_height="48dp"
         android:layout_marginEnd="56dp"
         android:layout_marginLeft="36dp"
         android:layout_marginTop="24dp"
-        android:onClick="setLengths"
+        android:onClick="setRecyclerView"
         android:text="@string/Duration"
         app:layout_constraintEnd_toStartOf="@+id/genreRecycle"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button4" />
+        app:layout_constraintTop_toBottomOf="@+id/Release" />
 
     <Button
         android:id="@+id/button2"
@@ -97,5 +97,39 @@
         android:text="@string/Submit"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/genreRecycle" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="16dp"
+        android:text="Amount of songs:"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent" />
+
+    <TextView
+        android:id="@+id/answer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:layout_marginStart="56dp"
+        android:text="Blank"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textView" />
+
+    <Button
+        android:id="@+id/update "
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="8dp"
+        android:onClick="combining"
+        android:text="Update"
+        app:layout_constraintBottom_toTopOf="@+id/textView"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
