@@ -109,6 +109,7 @@ public class Playlists implements Parcelable {
                                 ArrayList<String> durations = new ArrayList<String>();
                                 ArrayList<String> explicits = new ArrayList<String>();
                                 ArrayList<String> popularity = new ArrayList<String>();
+                                ArrayList<String> uri = new ArrayList<>();
                                 JSONArray tracksArray = response.getJSONArray("items");
                                 for (int i = 0; i < tracksArray.length(); i++) {
                                     JSONObject obj = tracksArray.getJSONObject(i);
@@ -118,9 +119,10 @@ public class Playlists implements Parcelable {
                                     durations.add(obj.getJSONObject("track").getString("duration_ms"));
                                     explicits.add(obj.getJSONObject("track").getString("explicit"));
                                     popularity.add(obj.getJSONObject("track").getString("popularity"));
+                                    uri.add(obj.getJSONObject("track").getString("uri"));
                                     artisturls += obj.getJSONObject("track").getJSONObject("album").getJSONArray("artists").getJSONObject(0).getString("id") + ",";
                                 }
-                                getMoreTrackInfo(names, albums , releases , durations , explicits , popularity , artisturls,context);
+                                getMoreTrackInfo(names, albums , releases , durations , explicits , popularity , uri , artisturls,context);
                             } catch (JSONException e) {
 
                             }
@@ -147,7 +149,7 @@ public class Playlists implements Parcelable {
     }
 
     public void getMoreTrackInfo(final ArrayList name , final ArrayList albums , final ArrayList releases , final ArrayList durations , final ArrayList explicits , final ArrayList popularity ,
-                                 String artisturls , final Context context){
+                                 final ArrayList uri ,String artisturls , final Context context){
         System.out.println("In Get more info");
         artisturls = artisturls.substring(0, artisturls.length() - 1);
         String url ="https://api.spotify.com/v1/artists?ids=" + artisturls;
@@ -168,7 +170,7 @@ public class Playlists implements Parcelable {
                                     }
                                 }
                                 Tracks tracks = new Tracks(name.get(i).toString(), albums.get(i).toString(),artistName , releases.get(i).toString(),
-                                        durations.get(i).toString(),explicits.get(i).toString(),popularity.get(i).toString(),list);
+                                        durations.get(i).toString(),explicits.get(i).toString(),popularity.get(i).toString() , uri.get(i).toString(),list);
                                 trackList.add(tracks);
                                 System.out.println("Tracks added ");
                                 }

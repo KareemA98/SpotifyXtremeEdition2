@@ -28,7 +28,7 @@ public class FilterAdapter extends RecyclerView.Adapter<FilterAdapter.MyViewHold
 
         public MyViewHolder(View view) {
             super(view);
-            title = (TextView) view.findViewById(R.id.filterTitle);
+            title = (TextView) view.findViewById(R.id.FilterName);
             numberOfSongs = (TextView) view.findViewById(R.id.filterSongs);
             checkBox = (CheckBox) view.findViewById(R.id.checkBox);
             relativeLayout = (RelativeLayout) view.findViewById(R.id.filterRelativelayout);

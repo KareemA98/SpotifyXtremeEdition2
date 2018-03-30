@@ -11,14 +11,14 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/filterTitle"
+        android:id="@+id/Title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/cover"
-        android:layout_toRightOf="@+id/cover"
+        android:layout_toEndOf="@+id/AlbumCover"
+        android:layout_toRightOf="@+id/AlbumCover"
         android:textColor="@color/title"
         android:textSize="16sp"
         android:textStyle="bold" />
@@ -27,12 +27,14 @@
         android:id="@+id/amountOfSongs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/filterTitle"
-        android:layout_toEndOf="@+id/cover"
-        android:layout_toRightOf="@+id/cover" />
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/Title"
+        android:layout_toEndOf="@+id/AlbumCover"
+        android:layout_toRightOf="@+id/AlbumCover" />
 
     <ImageView
-        android:id="@+id/cover"
+        android:id="@+id/AlbumCover"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"

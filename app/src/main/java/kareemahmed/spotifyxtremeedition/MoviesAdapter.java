@@ -27,9 +27,9 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MyViewHold
 
         public MyViewHolder(View view) {
             super(view);
-            name = (TextView) view.findViewById(R.id.filterTitle);
+            name = (TextView) view.findViewById(R.id.Title);
             trackNumber = (TextView) view.findViewById(R.id.amountOfSongs);
-            image = (ImageView) view.findViewById(R.id.cover);
+            image = (ImageView) view.findViewById(R.id.AlbumCover);
             relativeLayout = (RelativeLayout) view.findViewById(R.id.relativelayout);
 
         }

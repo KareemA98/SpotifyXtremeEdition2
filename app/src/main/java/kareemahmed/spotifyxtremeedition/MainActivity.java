@@ -37,6 +37,7 @@ public class MainActivity extends Activity {
     private static final String CLIENT_ID = "88414718aa494ca28bc1f99ddecc7e27";
     private static final String REDIRECT_URI = "my-spotify-app-login://callback";
     private static final int REQUEST_CODE = 1337;
+    public static String userId = "";
     public static String mAccessToken;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +46,7 @@ public class MainActivity extends Activity {
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         AuthenticationRequest.Builder builder =
                 new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
-        builder.setScopes(new String[]{"user-read-private","playlist-read-private"});
+        builder.setScopes(new String[]{"user-read-private","playlist-read-private","playlist-modify-public" , "playlist-modify-private"});
         builder.setShowDialog(true);
         AuthenticationRequest request = builder.build();
         AuthenticationClient.openLoginInBrowser(this ,request);
@@ -110,9 +111,12 @@ public class MainActivity extends Activity {
                                 JSONObject obj = playlistArray.getJSONObject(i);
                                 String name = obj.getString("name");
                                 String trackNumber = obj.getJSONObject("tracks").getString("total");
-                                String image = obj.getJSONArray("images").getJSONObject(0).getString("url");
-                                String id = obj.getString("id");
-                                String userId = obj.getJSONObject("owner").getString("id");
+                                String image = "No image";
+                                if(obj.getJSONArray("images").length() > 0){
+                                    image = obj.getJSONArray("images").getJSONObject(0).getString("url");
+                                }
+                                String id = obj.getString("id"); //todo Error if the playlist is empty to do with there being no image
+                                userId = obj.getJSONObject("owner").getString("id");
                                 Playlists playlist = new Playlists(name,trackNumber,image,id,userId);
                                 playlistlist.add(playlist);
                             }
