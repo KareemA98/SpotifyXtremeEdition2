@@ -1,7 +1,11 @@
 package kareemahmed.spotifyxtremeedition;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,10 +64,16 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MyViewHold
         holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Toast.makeText(context,"You clicked "+movie.getName(), Toast.LENGTH_LONG).show();
-                        Intent intent = new Intent(context, PickSubCategory.class);
-                        intent.putExtra("Parcel Data",movie);
-                        context.startActivity(intent);
+                        Bundle bundle = new Bundle();
+                        bundle.putParcelable("Parcel Data", movie);
+                        AppCompatActivity appCompatActivity = (AppCompatActivity) view.getContext();
+                        SubCategoryFragment subCategoryFragment = SubCategoryFragment.newInstance();
+                        subCategoryFragment.setArguments(bundle);
+                        FragmentTransaction fragmentTransaction = appCompatActivity.getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                        fragmentTransaction.addToBackStack(null);
+                        fragmentTransaction.replace(R.id.root_frame,subCategoryFragment);
+                        fragmentTransaction.commit();
             }
         });
     }

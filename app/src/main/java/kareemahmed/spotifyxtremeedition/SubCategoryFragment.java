@@ -1,41 +1,25 @@
 package kareemahmed.spotifyxtremeedition;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.InputType;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
-
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.time.Year;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
-public class PickSubCategory extends Activity {
+public class SubCategoryFragment extends Fragment implements View.OnClickListener{
     public TextView genre;
     public Playlists movie;
     private ArrayList<Filter> popularities = new ArrayList<Filter>();
@@ -44,65 +28,104 @@ public class PickSubCategory extends Activity {
     private ArrayList<Filter> years = new ArrayList<>();
     private ArrayList<Filter> genres = new ArrayList<Filter>();
     public static HashSet<Tracks> finalSet = new HashSet<>();
-
     private Boolean filtered = false;
+    private RecyclerView recyclerView;
 
+    public static SubCategoryFragment newInstance(){
+        SubCategoryFragment subCategoryFragment = new SubCategoryFragment();
+        return subCategoryFragment;
+    }
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pick_sub_category);
-        movie = getIntent().getParcelableExtra("Parcel Data");
-        movie.getTracks("https://api.spotify.com/v1/users/" + movie.getUserId() + "/playlists/" + movie.getId() + "/tracks", getApplicationContext());
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        movie = getArguments().getParcelable("Parcel Data");
+        movie.getTracks("https://api.spotify.com/v1/users/" + movie.getUserId() + "/playlists/" + movie.getId() + "/tracks", getActivity());
+    }
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View v = inflater.inflate(R.layout.activity_pick_sub_category, container, false);
+        Button genre = v.findViewById(R.id.Genre);
+        Button explicit = v.findViewById(R.id.Explicits);
+        Button popularity = v.findViewById(R.id.Popularity);
+        Button release = v.findViewById(R.id.Release);
+        Button duration = v.findViewById(R.id.Duration);
+        Button update = v.findViewById(R.id.update);
+        Button submit = v.findViewById(R.id.Submit);
+        update.setOnClickListener(this);
+        genre.setOnClickListener(this);
+        explicit.setOnClickListener(this);
+        popularity.setOnClickListener(this);
+        release.setOnClickListener(this);
+        duration.setOnClickListener(this);
+        submit.setOnClickListener(this);
+        return v;
+    }
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        recyclerView = getView().findViewById(R.id.genreRecycle);
+
     }
 
     @Override
     public void onResume() {
         super.onResume();  // Always call the superclass method first
     }
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case (R.id.Genre):
+                setRecyclerView(genres);
+                break;
+            case (R.id.Explicits):
+                setRecyclerView(explcits);
+                break;
+            case (R.id.Popularity):
+                setRecyclerView(popularities);
+                break;
+            case (R.id.Release):
+                setRecyclerView(years);
+                break;
+            case (R.id.Duration):
+                setRecyclerView(lengths);
+                break;
+            case (R.id.Submit):
+                submit();
+                break;
+            case (R.id.update):
+                update();
+                break;
+        }
+        finalSet = combining();
+        TextView answer;
+        answer = getView().findViewById(R.id.answer);
+        answer.setText(Integer.toString(finalSet.size()));
+        }
 
-    public void setRecyclerView(View view) {
-        ArrayList<Filter> passArray = new ArrayList<>();
+    public void setRecyclerView(ArrayList<Filter> passArray) {
         if (!filtered) {
             filtersMade();
         }
-        switch (view.getId()) {
-            case (R.id.Genre):
-                passArray = genres;
-                break;
-            case (R.id.Explicits):
-                passArray = explcits;
-                break;
-            case (R.id.Popularity):
-                passArray = popularities;
-                break;
-            case (R.id.Release):
-                passArray = years;
-                break;
-            case (R.id.Duration):
-                passArray = lengths;
-                break;
-        }
-        RecyclerView recyclerView;
         FilterAdapter fAdapter;
-        recyclerView = (RecyclerView) findViewById(R.id.genreRecycle);
-        fAdapter = new FilterAdapter(passArray, getApplicationContext());
+        fAdapter = new FilterAdapter(passArray, getActivity());
         recyclerView.setHasFixedSize(true);
         // vertical RecyclerView
         // keep movie_list_row.xml width to `match_parent`
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
         // adding inbuilt divider line
-        recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
         // adding custom divider line with padding 16dp
         // recyclerView.addItemDecoration(new MyDividerItemDecoration(this, LinearLayoutManager.VERTICAL, 16));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(fAdapter);
     }
 
-    public void update(View view){
+    public void update(){
         finalSet = combining();
         TextView answer;
-        answer = findViewById(R.id.answer);
+        answer = getView().findViewById(R.id.answer);
         answer.setText(Integer.toString(finalSet.size()));
     }
 
@@ -276,9 +299,13 @@ public class PickSubCategory extends Activity {
         }
     }
 
-    public void submit(View view) {
-        finalSet = combining();
-        Intent intent = new Intent(getApplicationContext(), TrackOverview.class);
-        startActivity(intent);
+    public void submit() {
+        MainActivity.tracksHashSet = combining();
+        TrackOverview trackOverview = TrackOverview.newInstance();
+        FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.replace(R.id.root_frame,trackOverview);
+        fragmentTransaction.commit();
     }
 }

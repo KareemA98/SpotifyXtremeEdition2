@@ -6,20 +6,22 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.InputType;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.JsonRequest;
-import com.android.volley.toolbox.StringRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,43 +30,57 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 
-public class TrackOverview extends Activity {
+public class TrackOverview extends Fragment implements View.OnClickListener {
     private HashSet<Tracks> track;
     private String m_Text = "";
     private Boolean finished = false;
     ArrayList<Tracks> list = new ArrayList<>();
+    private RecyclerView recyclerView;
 
+    public static TrackOverview newInstance(){
+        TrackOverview trackOverview = new TrackOverview();
+        return trackOverview;
+    }
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_track_overview);
-        track = PickSubCategory.finalSet;
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View v = inflater.inflate(R.layout.activity_track_overview, container, false);
+        Button submit = v.findViewById(R.id.Submit);
+        submit.setOnClickListener(this);
+        return v;
+    }
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        recyclerView = getView().findViewById(R.id.trackRecyclerView);
+    }
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        track = MainActivity.tracksHashSet;
         list.addAll(track);
-        RecyclerView recyclerView;
         TrackAdapter tAdapter;
-        recyclerView = (RecyclerView) findViewById(R.id.trackRecyclerView);
-        tAdapter = new TrackAdapter(list, getApplicationContext());
+        tAdapter = new TrackAdapter(list, getActivity());
         recyclerView.setHasFixedSize(true);
         // vertical RecyclerView
         // keep movie_list_row.xml width to `match_parent`
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
         // adding inbuilt divider line
-        recyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
         // adding custom divider line with padding 16dp
         // recyclerView.addItemDecoration(new MyDividerItemDecoration(this, LinearLayoutManager.VERTICAL, 16));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(tAdapter);
     }
 
-    public void submit(View view) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    public void submit() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Name of playlist");
 // Set up the input
-        final EditText input = new EditText(this);
+        final EditText input = new EditText(getActivity());
 // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
         builder.setView(input);
 // Set up the buttons
@@ -84,6 +100,10 @@ public class TrackOverview extends Activity {
         builder.show();
     }
 
+    @Override
+    public void onClick(View v) {
+        submit();
+    }
     public void createPlaylist() {
         System.out.println("Job done");
         JSONObject postparams = new JSONObject();
@@ -120,7 +140,7 @@ public class TrackOverview extends Activity {
                 return headers;
             }
         };
-        AppSingleton.getInstance(getApplicationContext()).addToRequestQueue(jsObjRequest);
+        AppSingleton.getInstance(getActivity()).addToRequestQueue(jsObjRequest);
 
     }
 
@@ -170,7 +190,7 @@ public class TrackOverview extends Activity {
                     return headers;
                 }
             };
-            AppSingleton.getInstance(getApplicationContext()).addToRequestQueue(jsObjRequest);
+            AppSingleton.getInstance(getActivity()).addToRequestQueue(jsObjRequest);
             offset += 100;
         }
             while (offset < list.size());
