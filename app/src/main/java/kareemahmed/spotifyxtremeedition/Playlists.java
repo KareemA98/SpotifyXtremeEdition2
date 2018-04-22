@@ -1,6 +1,7 @@
 package kareemahmed.spotifyxtremeedition;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -31,12 +32,12 @@ public class Playlists implements Parcelable {
     }
 
 
-    public Playlists(String name, String trackNumber, String image , String id , String userId) {
-        this.name = name;
-        this.trackNumber = trackNumber;
-        this.image = image;
-        this.id = id;
-        this.userId = userId;
+    public Playlists(Cursor cursor) {
+        this.name = cursor.getString(cursor.getColumnIndex(ExampleProvider.COLUMN_NAME));
+        this.trackNumber = cursor.getString(cursor.getColumnIndex(ExampleProvider.COLUMN_NOOFSONGS));
+        this.image = cursor.getString(cursor.getColumnIndex(ExampleProvider.COLUMN_IMAGE));
+        this.id = cursor.getString(cursor.getColumnIndex(ExampleProvider.COLUMN_ID));
+        this.userId = cursor.getString(cursor.getColumnIndex(ExampleProvider.COLUMN_USERID));
     }
 
     protected Playlists(Parcel in) {
@@ -85,18 +86,13 @@ public class Playlists implements Parcelable {
         return userId;
     }
 
-    public void getTracks(String url, final Context context) {
-        System.out.println("in Get Tracks");
-        int amountOfSongs = Integer.parseInt(trackNumber);
-        int offset = 0;
-        do {
-                String newUrl = (url + "?offset=" + offset + "&limit=50");
+    public void getTracks(int offset ,int amountOfSongs, String url, final Context context) {
+        String newUrl = (url + "?offset=" + offset + "&limit=50");
             JsonObjectRequest jsObjRequest = new JsonObjectRequest
-                    (Request.Method.GET, newUrl, null, new Response.Listener<JSONObject>() {
+                   (Request.Method.GET, newUrl, null, new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
                             try {
-                                System.out.println("responce");
                                 String artisturls = "";
                                 ArrayList<String> names = new ArrayList<String>();
                                 ArrayList<String> albums = new ArrayList<String>();
@@ -117,8 +113,9 @@ public class Playlists implements Parcelable {
                                     uri.add(obj.getJSONObject("track").getString("uri"));
                                     artisturls += obj.getJSONObject("track").getJSONObject("album").getJSONArray("artists").getJSONObject(0).getString("id") + ",";
                                 }
-                                getMoreTrackInfo(names, albums , releases , durations , explicits , popularity , uri , artisturls,context);
-                            } catch (JSONException e) {
+                                getMoreTrackInfo(names, albums, releases, durations, explicits, popularity, uri, artisturls, context);
+                                }
+                            catch (JSONException e) {
 
                             }
                         }
@@ -139,8 +136,9 @@ public class Playlists implements Parcelable {
             };
             AppSingleton.getInstance(context).addToRequestQueue(jsObjRequest);
             offset+=50;
-            amountOfSongs -=50;
-        } while (amountOfSongs > 1);
+            if (offset < amountOfSongs) {
+                getTracks(offset,amountOfSongs,url,context);
+            }
     }
 
     public void getMoreTrackInfo(final ArrayList name , final ArrayList albums , final ArrayList releases , final ArrayList durations , final ArrayList explicits , final ArrayList popularity ,
@@ -169,7 +167,7 @@ public class Playlists implements Parcelable {
                                 trackList.add(tracks);
                                 System.out.println("Tracks added ");
                                 }
-
+                                LoadingScreen.increment();
                             } catch (JSONException e) {
 
                             }

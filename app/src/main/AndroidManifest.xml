@@ -12,22 +12,13 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
+        android:theme="@style/Theme.AppCompat.Light">
         <activity
             android:name="com.spotify.sdk.android.authentication.LoginActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity
-            android:name=".PickSubCategory"
-            android:parentActivityName=".MainActivity">
-        </activity>
-        <activity android:name=".TrackOverview">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".PickSubCategory" />
-        </activity>
-        <activity
             android:name=".MainActivity"
-            android:label="@string/title_activity_main2"
+            android:label="@string/app_name"
             android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -36,13 +27,20 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data
                     android:host="callback"
                     android:scheme="my-spotify-app-login" />
             </intent-filter>
         </activity>
+
+        <provider
+            android:name=".ExampleProvider"
+            android:authorities="kareemahmed.spotifyxtremeedition.ExampleProvider" />
+
     </application>
 
 </manifest>

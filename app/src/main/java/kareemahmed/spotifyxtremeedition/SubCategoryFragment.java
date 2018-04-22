@@ -1,14 +1,22 @@
 package kareemahmed.spotifyxtremeedition;
 
+import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.test.LoaderTestCase;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +27,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 
-public class SubCategoryFragment extends Fragment implements View.OnClickListener{
+public class SubCategoryFragment extends Fragment implements View.OnClickListener {
     public TextView genre;
     public Playlists movie;
     private ArrayList<Filter> popularities = new ArrayList<Filter>();
@@ -30,6 +38,8 @@ public class SubCategoryFragment extends Fragment implements View.OnClickListene
     public static HashSet<Tracks> finalSet = new HashSet<>();
     private Boolean filtered = false;
     private RecyclerView recyclerView;
+    private Boolean done = false;
+    public static ProgressDialog progress;
 
     public static SubCategoryFragment newInstance(){
         SubCategoryFragment subCategoryFragment = new SubCategoryFragment();
@@ -39,7 +49,10 @@ public class SubCategoryFragment extends Fragment implements View.OnClickListene
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         movie = getArguments().getParcelable("Parcel Data");
-        movie.getTracks("https://api.spotify.com/v1/users/" + movie.getUserId() + "/playlists/" + movie.getId() + "/tracks", getActivity());
+        double trackNumber = Integer.parseInt(movie.getTrackNumber());
+        new LoadingScreen(getActivity(), Math.ceil(trackNumber / 50));
+        String url = "https://api.spotify.com/v1/users/" + movie.getUserId() + "/playlists/" + movie.getId() + "/tracks";
+        movie.getTracks(0,Integer.parseInt(movie.getTrackNumber()),url, getActivity());
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -65,7 +78,6 @@ public class SubCategoryFragment extends Fragment implements View.OnClickListene
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         recyclerView = getView().findViewById(R.id.genreRecycle);
-
     }
 
     @Override

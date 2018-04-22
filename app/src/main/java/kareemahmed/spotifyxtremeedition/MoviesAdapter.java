@@ -3,6 +3,7 @@ package kareemahmed.spotifyxtremeedition;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +24,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MyViewHold
 
     private List<Playlists> moviesList;
     private Context context;
+    private Cursor mCursor;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView name, trackNumber;
@@ -53,19 +55,29 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MyViewHold
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
-        final Playlists movie = moviesList.get(position);
-        holder.name.setText(movie.getName());
-        holder.trackNumber.setText(movie.getTrackNumber());
+    public void onBindViewHolder(MyViewHolder holder, final int position) {
+        String word = "";
+        if (mCursor != null) {
+            if (mCursor.moveToPosition(position)) {
+                int indexWord = mCursor.getColumnIndex(ExampleProvider.COLUMN_NAME);
+                word = mCursor.getString(indexWord);
+                holder.name.setText(word);
+                indexWord = mCursor.getColumnIndex(ExampleProvider.COLUMN_NOOFSONGS);
+                word = mCursor.getString(indexWord);
+                holder.trackNumber.setText(word +" songs");
+            }
+        }
         Picasso.with(context)
-                .load(movie.getImage())
+                .load(mCursor.getString(mCursor.getColumnIndex(ExampleProvider.COLUMN_IMAGE)))
                 .resize(300,300)
                 .into(holder.image);
         holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         Bundle bundle = new Bundle();
-                        bundle.putParcelable("Parcel Data", movie);
+                        mCursor.moveToPosition(position);
+                        Playlists playlist = new Playlists(mCursor);
+                        bundle.putParcelable("Parcel Data", playlist);
                         AppCompatActivity appCompatActivity = (AppCompatActivity) view.getContext();
                         SubCategoryFragment subCategoryFragment = SubCategoryFragment.newInstance();
                         subCategoryFragment.setArguments(bundle);
@@ -79,7 +91,15 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MyViewHold
     }
     @Override
     public int getItemCount() {
-        return moviesList.size();
+        if (mCursor != null){
+            return mCursor.getCount();
+        } else{
+            return - 1;
+        }
+    }
+    public void setData(Cursor cursor){
+        mCursor = cursor;
+        notifyDataSetChanged();
     }
 }
 

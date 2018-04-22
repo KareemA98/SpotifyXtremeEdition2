@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Spotify Xtreme Edition</string>
-    <string name="Name">There\'s an issue</string>
     <string name="genre">Genres</string>
     <string name="Explicits">Explicits</string>
     <string name="Popularity">Popularity</string>
@@ -13,7 +12,4 @@
     <string name="tab_text_3">Tab 3</string>
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

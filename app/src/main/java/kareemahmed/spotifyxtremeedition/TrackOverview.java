@@ -151,7 +151,7 @@ public class TrackOverview extends Fragment implements View.OnClickListener {
             JSONObject postparams = new JSONObject();
             JSONArray uris = new JSONArray();
             int i = offset;
-            while(i < (offset + 100 ) && i < (list.size() - 1)){
+            while(i < (offset + 100 ) && i < (list.size())){
                 uris.put(list.get(i).getUri());
                 i++;
             }
