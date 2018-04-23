@@ -3,18 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="kareemahmed.spotifyxtremeedition.MainActivity">
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        app:showAsAction="ifRoom|withText"
-        android:title="@string/action_settings" />
-    <item
         android:id="@+id/action_logout"
         android:orderInCategory="100"
-        app:showAsAction="ifRoom|withText"
+        app:showAsAction="never"
         android:title="Logout" />
     <item
         android:id="@+id/action_refresh"
         android:orderInCategory="100"
-        app:showAsAction="ifRoom|withText"
+        app:showAsAction="never"
         android:title="Refresh" />
+    <item
+        android:id="@+id/menu_item_share"
+        app:showAsAction="never"
+        android:title="Share"
+        app:actionProviderClass=
+            "android.support.v7.widget.ShareActionProvider" />
 </menu>

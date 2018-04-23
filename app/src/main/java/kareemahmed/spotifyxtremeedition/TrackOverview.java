@@ -2,12 +2,19 @@ package kareemahmed.spotifyxtremeedition;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -31,6 +38,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+
+import static android.content.Context.NOTIFICATION_SERVICE;
 
 public class TrackOverview extends Fragment implements View.OnClickListener {
     private HashSet<Tracks> track;
@@ -169,6 +178,7 @@ public class TrackOverview extends Fragment implements View.OnClickListener {
                         public void onResponse(JSONObject response) {
                             System.out.println("Job done");
                             if (finished) {
+                                notification();
                                 String uri = "spotify:user:" + MainActivity.userId + ":playlist:" + playlistId;
                                 Intent launcher = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
                                 startActivity(launcher);
@@ -194,5 +204,22 @@ public class TrackOverview extends Fragment implements View.OnClickListener {
             offset += 100;
         }
             while (offset < list.size());
+    }
+
+    public void notification() {
+            // Create an explicit intent for an Activity in your app
+            Intent intent = new Intent(getActivity(), MainActivity.class);
+            //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            PendingIntent pendingIntent = PendingIntent.getActivity(getActivity(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getActivity())
+                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setContentTitle("Thank you for using XtremeEdition")
+                .setContentText("Press to make another playlist")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentIntent(pendingIntent)
+                    .setAutoCancel(true);
+            // notificationId is a unique int for each notification that you must define
+             MainActivity.mNotifyManager.notify(0, mBuilder.build());
     }
 }

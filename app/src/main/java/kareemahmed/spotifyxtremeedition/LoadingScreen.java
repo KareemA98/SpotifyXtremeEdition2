@@ -15,10 +15,6 @@ public class LoadingScreen {
         progress.show();
     }
 
-    public void cancel(){
-        progress.dismiss();
-    }
-
     public static void increment(){
         seconds--;
         if (seconds == 0){
