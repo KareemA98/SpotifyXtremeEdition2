@@ -24,7 +24,6 @@ public class PlaylistFragment extends Fragment implements LoaderManager.LoaderCa
     private List<Playlists> playlistlist = new ArrayList<>();
     private RecyclerView recyclerView;
     private MoviesAdapter mAdapter;
-    public static String userId;
 
     public static PlaylistFragment newInstance(){
         PlaylistFragment playlistFragment = new PlaylistFragment();
@@ -63,7 +62,7 @@ public class PlaylistFragment extends Fragment implements LoaderManager.LoaderCa
         super.onResume();  // Always call the superclass method first
     }
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Uri baseUri = Uri.parse("content://kareemahmed.spotifyxtremeedition.ExampleProvider/students");
+        Uri baseUri = Uri.parse("content://kareemahmed.spotifyxtremeedition.ExampleProvider/playlists");
         // Now create and return a CursorLoader that will take care of
         // creating a Cursor for the data being displayed.
         String[] projection = new String[]{ExampleProvider.COLUMN_IMAGE,ExampleProvider.COLUMN_NAME,ExampleProvider.COLUMN_NOOFSONGS,ExampleProvider.COLUMN_ID,ExampleProvider.COLUMN_USERID};

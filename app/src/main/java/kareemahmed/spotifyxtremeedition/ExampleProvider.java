@@ -17,33 +17,32 @@ import java.util.HashMap;
 
 public class ExampleProvider extends ContentProvider {
     static final String PROVIDER_NAME = "kareemahmed.spotifyxtremeedition.ExampleProvider";
-    static final String URL = "content://" + PROVIDER_NAME + "/students";
+    static final String URL = "content://" + PROVIDER_NAME + "/playlists";
     static final Uri CONTENT_URI = Uri.parse(URL);
 
     static final String _ID = "_id";
     static final String NAME = "name";
-    static final String GRADE = "grade";
     private SQLiteDatabase db;
 
     private static HashMap<String, String> STUDENTS_PROJECTION_MAP;
 
-    static final int STUDENTS = 1;
-    static final int STUDENT_ID = 2;
+    static final int Playlists = 1;
+    static final int Playlist_ID = 2;
 
     static final UriMatcher uriMatcher;
     static{
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        uriMatcher.addURI(PROVIDER_NAME, "students", STUDENTS);
-        uriMatcher.addURI(PROVIDER_NAME, "students/#", STUDENT_ID);
+        uriMatcher.addURI(PROVIDER_NAME, "playlists", Playlists);
+        uriMatcher.addURI(PROVIDER_NAME, "playlists/#", Playlist_ID);
     }
 
     /**
      * Database specific constant declarations
      */
     //information of database
-    private static final int DATABASE_VERSION = 5;
-    private static final String DATABASE_NAME = "students.db";
-    public static final String TABLE_NAME = "Student";
+    private static final int DATABASE_VERSION = 6;
+    private static final String DATABASE_NAME = "playlists.db";
+    public static final String TABLE_NAME = "Playlists";
     public static final String COLUMN_ID = "ID";
     public static final String COLUMN_NAME = "Name";
     public static final String COLUMN_NOOFSONGS = "AmountOfSongs";
@@ -117,11 +116,11 @@ public class ExampleProvider extends ContentProvider {
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         qb.setTables(TABLE_NAME);
         switch (uriMatcher.match(uri)) {
-            case STUDENTS:
+            case Playlists:
                 qb.setProjectionMap(STUDENTS_PROJECTION_MAP);
                 break;
 
-            case STUDENT_ID:
+            case Playlist_ID:
                 qb.appendWhere( _ID + "=" + uri.getPathSegments().get(1));
                 break;
 
@@ -148,11 +147,11 @@ public class ExampleProvider extends ContentProvider {
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         int count = 0;
         switch (uriMatcher.match(uri)){
-            case STUDENTS:
+            case Playlists:
                 count = db.delete(TABLE_NAME, selection, selectionArgs);
                 break;
 
-            case STUDENT_ID:
+            case Playlist_ID:
                 String id = uri.getPathSegments().get(1);
                 break;
             default:
@@ -168,11 +167,11 @@ public class ExampleProvider extends ContentProvider {
                       String selection, String[] selectionArgs) {
         int count = 0;
         switch (uriMatcher.match(uri)) {
-            case STUDENTS:
+            case Playlists:
                 count = db.update(TABLE_NAME, values, selection, selectionArgs);
                 break;
 
-            case STUDENT_ID:
+            case Playlist_ID:
                 break;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri );
@@ -188,13 +187,13 @@ public class ExampleProvider extends ContentProvider {
             /**
              * Get all student records
              */
-            case STUDENTS:
-                return "vnd.android.cursor.dir/vnd.example.students";
+            case Playlists:
+                return "vnd.android.cursor.dir/vnd.example.playlists";
             /**
              * Get a particular student
              */
-            case STUDENT_ID:
-                return "vnd.android.cursor.item/vnd.example.students";
+            case Playlist_ID:
+                return "vnd.android.cursor.item/vnd.example.playlists";
             default:
                 throw new IllegalArgumentException("Unsupported URI: " + uri);
         }

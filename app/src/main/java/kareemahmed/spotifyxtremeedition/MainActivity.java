@@ -10,7 +10,6 @@ import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.ShareActionProvider;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -44,8 +43,7 @@ public class MainActivity extends AppCompatActivity {
     public static NotificationManager mNotifyManager;
     private ShareActionProvider mShareActionProvider;
 
-    //todo Limited to only 20 playlist because of how i get them from the internet
-    //todo allow to refresh playlists
+    //todo if you logout and don't login nothing is showed. Not sure if this is correct or if i should add something.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,10 +58,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();  // Always call the superclass method first
-        Uri playlist = Uri.parse("content://" + PROVIDER_NAME + "/students");
+        Uri playlist = Uri.parse("content://" + PROVIDER_NAME + "/playlists");
         Cursor c = getContentResolver().query(playlist, null, null, null, null);
         if (c.getCount() == 0) {
-            getUserPlaylists();
+            getUserPlaylists("https://api.spotify.com/v1/me/playlists");
         }
     }
     @Override
@@ -84,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
-        Uri playlist = Uri.parse("content://" + PROVIDER_NAME + "/students");
+        Uri playlist = Uri.parse("content://" + PROVIDER_NAME + "/playlists");
         switch (item.getItemId()) {
             case R.id.menu_item_share:
                 Intent myShareIntent = new Intent(Intent.ACTION_SEND);
@@ -92,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.action_refresh:
                 getContentResolver().delete(playlist, null, null);
-                getUserPlaylists();
+                getUserPlaylists("https://api.spotify.com/v1/me/playlists");
                 return true;
             case R.id.action_logout:
                 getContentResolver().delete(playlist, null, null);
@@ -142,8 +140,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void getUserPlaylists() {
-        String url = "https://api.spotify.com/v1/me/playlists";
+    public void getUserPlaylists(String url) {
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                     @Override
@@ -169,6 +166,9 @@ public class MainActivity extends AppCompatActivity {
                                 values.put(ExampleProvider.COLUMN_USERID, userId);
                                 Uri uri = getContentResolver().insert(ExampleProvider.CONTENT_URI, values);
                                 System.out.println(uri.toString());
+                            }
+                            if((response.getString("next")) != "null"){
+                                getUserPlaylists(response.getString("next"));
                             }
                         } catch (JSONException e) {
 

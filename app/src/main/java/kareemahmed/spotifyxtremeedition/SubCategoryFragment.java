@@ -225,8 +225,8 @@ public class SubCategoryFragment extends Fragment implements View.OnClickListene
             durationFilter(track);
             yearFilter(track);
         }
-        Collections.sort(genres);
-        //Collections.sort(years);
+        Collections.sort(genres,Filter.getAttribute1Comparator());
+        Collections.sort(years,Filter.getAttribute2Comparator());
         filtered = true;
     }
 
@@ -246,9 +246,9 @@ public class SubCategoryFragment extends Fragment implements View.OnClickListene
 
     public void explicitFiler(Tracks tracks) {
         if (tracks.getExplicit()) {
-            explcits.get(0).addTracks(tracks);
-        } else {
             explcits.get(1).addTracks(tracks);
+        } else {
+            explcits.get(0).addTracks(tracks);
         }
     }
 

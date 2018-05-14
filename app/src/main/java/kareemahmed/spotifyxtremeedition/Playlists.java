@@ -116,6 +116,7 @@ public class Playlists implements Parcelable {
                                 getMoreTrackInfo(names, albums, releases, durations, explicits, popularity, uri, artisturls, context);
                                 }
                             catch (JSONException e) {
+                                throw new RuntimeException(e);
 
                             }
                         }

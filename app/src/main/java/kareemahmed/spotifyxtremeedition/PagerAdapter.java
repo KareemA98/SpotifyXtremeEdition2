@@ -22,7 +22,7 @@ public class PagerAdapter extends FragmentPagerAdapter {
             case 0: // Fragment # 0 - This will show FirstFragment
                 return new RootFragment();
             case 1: // Fragment # 0 - This will show FirstFragment different title
-                return PlaylistFragment.newInstance();
+                return WebViewFragment.newInstance();
             default:
                 return null;
         }
