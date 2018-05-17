@@ -26,10 +26,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
-
+// this fragment allows you to filter your songs
 public class SubCategoryFragment extends Fragment implements View.OnClickListener {
     public TextView genre;
     public Playlists movie;
+    // these arraylists contains all of the different type of filters i can do. some have more then others
     private ArrayList<Filter> popularities = new ArrayList<Filter>();
     private ArrayList<Filter> explcits = new ArrayList<Filter>();
     private ArrayList<Filter> lengths = new ArrayList<Filter>(); //ToDo
@@ -38,8 +39,6 @@ public class SubCategoryFragment extends Fragment implements View.OnClickListene
     public static HashSet<Tracks> finalSet = new HashSet<>();
     private Boolean filtered = false;
     private RecyclerView recyclerView;
-    private Boolean done = false;
-    public static ProgressDialog progress;
 
     public static SubCategoryFragment newInstance(){
         SubCategoryFragment subCategoryFragment = new SubCategoryFragment();
@@ -49,7 +48,10 @@ public class SubCategoryFragment extends Fragment implements View.OnClickListene
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         movie = getArguments().getParcelable("Parcel Data");
+        // here i get the object that i passed through.
+        // i have to round up so i do enough get requests.
         double trackNumber = Integer.parseInt(movie.getTrackNumber());
+        // i call the loading screen as a bunch of get requests are gonna happen and then pass it the number of get requests are going to happen so it changes in length depending.
         new LoadingScreen(getActivity(), Math.ceil(trackNumber / 50));
         String url = "https://api.spotify.com/v1/users/" + movie.getUserId() + "/playlists/" + movie.getId() + "/tracks";
         movie.getTracks(0,Integer.parseInt(movie.getTrackNumber()),url, getActivity());
@@ -86,6 +88,7 @@ public class SubCategoryFragment extends Fragment implements View.OnClickListene
     }
     @Override
     public void onClick(View v) {
+        // a switch for all my buttons
         switch (v.getId()) {
             case (R.id.Genre):
                 setRecyclerView(genres);
@@ -109,6 +112,7 @@ public class SubCategoryFragment extends Fragment implements View.OnClickListene
                 update();
                 break;
         }
+        // no matter what i press i call the combing method then update the counter at the bottom.
         finalSet = combining();
         TextView answer;
         answer = getView().findViewById(R.id.answer);
@@ -116,11 +120,13 @@ public class SubCategoryFragment extends Fragment implements View.OnClickListene
         }
 
     public void setRecyclerView(ArrayList<Filter> passArray) {
+        // this stops me from constantly calling the say method over and over again.
         if (!filtered) {
             filtersMade();
         }
+        // this makes a recycler view.
         FilterAdapter fAdapter;
-        fAdapter = new FilterAdapter(passArray, getActivity());
+        fAdapter = new FilterAdapter(passArray);
         recyclerView.setHasFixedSize(true);
         // vertical RecyclerView
         // keep movie_list_row.xml width to `match_parent`
@@ -135,6 +141,7 @@ public class SubCategoryFragment extends Fragment implements View.OnClickListene
     }
 
     public void update(){
+        // this updates the amount of songs in the current filter marker.
         finalSet = combining();
         TextView answer;
         answer = getView().findViewById(R.id.answer);
@@ -142,6 +149,8 @@ public class SubCategoryFragment extends Fragment implements View.OnClickListene
     }
 
     public HashSet<Tracks> combining() {
+        // this method takes all of the filters ive made and combines all of the ones that have been selected
+        // it goes through each arraylist and combines all of the selected filters
         HashSet<Tracks> genreSet = new HashSet<Tracks>();
         Iterator itr = genres.iterator();
         while (itr.hasNext()) {
@@ -182,6 +191,7 @@ public class SubCategoryFragment extends Fragment implements View.OnClickListene
                 yearsSet.addAll(years.returnSongs());
             }
         }
+        // now ive found all the songs in each category i need to intersect them all which is what im doing here.
         finalSet = new HashSet<Tracks>();
         finalSet.addAll(movie.trackList);
         if (genreSet.size() > 0) {
@@ -199,13 +209,14 @@ public class SubCategoryFragment extends Fragment implements View.OnClickListene
         if (yearsSet.size() > 0) {
             finalSet.retainAll(yearsSet);
         }
-        System.out.println("Kill me");
         return finalSet;
     }
 
     public void filtersMade() {
+        // here i make some of the filters not all as some are made through going through the songs.
         ArrayList<Tracks> trackList = movie.trackList;
         Iterator itr = trackList.iterator();
+        // i create all the popularites , explicts and lengths filters.
         popularities.add(new Filter("deep"));
         popularities.add(new Filter("indie"));
         popularities.add(new Filter("popular"));
@@ -217,6 +228,7 @@ public class SubCategoryFragment extends Fragment implements View.OnClickListene
         lengths.add(new Filter("3 Minutes"));
         lengths.add(new Filter("2 Minutes"));
         lengths.add(new Filter("less then 2 Minutes"));
+        // i go through each track in the playlist and put into each of the respective filters.
         while (itr.hasNext()) {
             Tracks track = (Tracks) itr.next();
             genreFilter(track);
@@ -225,11 +237,13 @@ public class SubCategoryFragment extends Fragment implements View.OnClickListene
             durationFilter(track);
             yearFilter(track);
         }
+        // i sort the genre filters by the amount of songs in each
         Collections.sort(genres,Filter.getAttribute1Comparator());
+        // i sort the year filters by the the year starting from recent.
         Collections.sort(years,Filter.getAttribute2Comparator());
         filtered = true;
     }
-
+    // these are all the filters they are a bunch of simple if statements
     public void popularityFilter(Tracks tracks) {
         int popularity = tracks.getPopularity();
         if (popularity > 0 && popularity < 26) {
@@ -266,7 +280,7 @@ public class SubCategoryFragment extends Fragment implements View.OnClickListene
             lengths.get(4).addTracks(tracks);
         }
     }
-
+    // the year one changes a bit as i need to check if the current year has already been made if not i need to make it.
     public void yearFilter(Tracks tracks) {
         String date = tracks.getRelease();
         date = date.substring(0, 4);
@@ -287,7 +301,7 @@ public class SubCategoryFragment extends Fragment implements View.OnClickListene
             years.add(year);
         }
     }
-
+    // same with genre where i check if it has already been made.
     public void genreFilter(Tracks tracks) {
         ArrayList<String> trackGenres = tracks.getGenres();
         for (int i = 0; i < trackGenres.size(); i++) {
@@ -310,7 +324,7 @@ public class SubCategoryFragment extends Fragment implements View.OnClickListene
             }
         }
     }
-
+    // if the submit button has been pressed i do another combine then open the next fragment.
     public void submit() {
         MainActivity.tracksHashSet = combining();
         TrackOverview trackOverview = TrackOverview.newInstance();

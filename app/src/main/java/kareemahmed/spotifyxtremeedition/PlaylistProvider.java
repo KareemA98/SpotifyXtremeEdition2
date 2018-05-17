@@ -14,9 +14,9 @@ import android.net.Uri;
 import android.text.TextUtils;
 
 import java.util.HashMap;
-
-public class ExampleProvider extends ContentProvider {
-    static final String PROVIDER_NAME = "kareemahmed.spotifyxtremeedition.ExampleProvider";
+// This is my content provider and sql database this class is based off some example code i found online ive just changed it so it will work with my system.
+public class PlaylistProvider extends ContentProvider {
+    static final String PROVIDER_NAME = "kareemahmed.spotifyxtremeedition.PlaylistProvider";
     static final String URL = "content://" + PROVIDER_NAME + "/playlists";
     static final Uri CONTENT_URI = Uri.parse(URL);
 

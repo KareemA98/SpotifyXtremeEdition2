@@ -1,8 +1,6 @@
 package kareemahmed.spotifyxtremeedition;
 
-import android.app.Fragment;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
@@ -14,22 +12,21 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MyViewHolder> {
+public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.MyViewHolder> {
+    //this is an adapter for my recycler view. this view contains all the info about each playlist
 
-    private List<Playlists> moviesList;
     private Context context;
     private Cursor mCursor;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView name, trackNumber;
-        public ImageView image;
-        public RelativeLayout relativeLayout;
+        private TextView name, trackNumber;
+        private ImageView image;
+        private RelativeLayout relativeLayout;
 
         public MyViewHolder(View view) {
             super(view);
@@ -41,8 +38,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MyViewHold
         }
     }
 
-    public MoviesAdapter(List<Playlists> moviesList , Context context) {
-        this.moviesList = moviesList;
+    public PlaylistAdapter(Context context) {
         this.context = context;
     }
 
@@ -56,24 +52,29 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MyViewHold
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, final int position) {
+        // i take in a cursor with all the database info so here i attach the data it to the recyclerview here
+
         String word = "";
         if (mCursor != null) {
             if (mCursor.moveToPosition(position)) {
-                int indexWord = mCursor.getColumnIndex(ExampleProvider.COLUMN_NAME);
+                int indexWord = mCursor.getColumnIndex(PlaylistProvider.COLUMN_NAME);
                 word = mCursor.getString(indexWord);
                 holder.name.setText(word);
-                indexWord = mCursor.getColumnIndex(ExampleProvider.COLUMN_NOOFSONGS);
+                indexWord = mCursor.getColumnIndex(PlaylistProvider.COLUMN_NOOFSONGS);
                 word = mCursor.getString(indexWord);
                 holder.trackNumber.setText(word +" songs");
             }
         }
+        // i use the picasso library to easily get images to put in my app.
         Picasso.with(context)
-                .load(mCursor.getString(mCursor.getColumnIndex(ExampleProvider.COLUMN_IMAGE)))
+                .load(mCursor.getString(mCursor.getColumnIndex(PlaylistProvider.COLUMN_IMAGE)))
                 .resize(300,300)
                 .into(holder.image);
+        // Here i create an onclick listener for the list which will open a new fragment
         holder.relativeLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        // im passing this fragment the playlist which was selected.
                         Bundle bundle = new Bundle();
                         mCursor.moveToPosition(position);
                         Playlists playlist = new Playlists(mCursor);

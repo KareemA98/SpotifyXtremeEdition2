@@ -15,6 +15,7 @@ import java.util.Set;
 
 /**
  * Created by krimb on 24/03/2018.
+ * another recycle view this time for tracks its similer to the rest of them.
  */
 
 public class TrackAdapter extends RecyclerView.Adapter<TrackAdapter.MyViewHolder> {

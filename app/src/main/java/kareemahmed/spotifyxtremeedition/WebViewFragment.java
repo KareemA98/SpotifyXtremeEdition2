@@ -8,7 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
-
+// this is my web view.
 public class WebViewFragment extends Fragment {
 
     public static WebViewFragment newInstance(){
@@ -33,6 +33,7 @@ public class WebViewFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     }
     public String userGuide() {
+        // here is the html for my web view.
         String data =
                 "<html>"+
                 "<body>"+

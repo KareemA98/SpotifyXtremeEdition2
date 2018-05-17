@@ -38,8 +38,8 @@
         </activity>
 
         <provider
-            android:name=".ExampleProvider"
-            android:authorities="kareemahmed.spotifyxtremeedition.ExampleProvider" />
+            android:name=".PlaylistProvider"
+            android:authorities="kareemahmed.spotifyxtremeedition.PlaylistProvider" />
 
     </application>
 

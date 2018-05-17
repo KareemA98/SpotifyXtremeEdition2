@@ -20,15 +20,20 @@ public class PagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0: // Fragment # 0 - This will show FirstFragment
-                return new RootFragment();
-            case 1: // Fragment # 0 - This will show FirstFragment different title
                 return WebViewFragment.newInstance();
+            case 1: // Fragment # 0 - This will show FirstFragment different title
+                return new RootFragment();
             default:
                 return null;
         }
     }
     @Override
     public CharSequence getPageTitle(int position) {
-        return "Page " + position;
+        if (position == 0) {
+            return "User Guide";
+        }
+        else {
+            return "Filtering";
+        }
     }
     }

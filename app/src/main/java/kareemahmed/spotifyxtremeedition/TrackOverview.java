@@ -40,7 +40,7 @@ import java.util.HashSet;
 import java.util.Map;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
-
+//This fragment is for my final page of the app and has most of the methods for making a new playlist.
 public class TrackOverview extends Fragment implements View.OnClickListener {
     private HashSet<Tracks> track;
     private String m_Text = "";
@@ -68,7 +68,9 @@ public class TrackOverview extends Fragment implements View.OnClickListener {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        // i get the songs im working with through a public varible in the main activity.
         track = MainActivity.tracksHashSet;
+        // i add them to a list and make a recycler view out of them.
         list.addAll(track);
         TrackAdapter tAdapter;
         tAdapter = new TrackAdapter(list, getActivity());
@@ -86,6 +88,7 @@ public class TrackOverview extends Fragment implements View.OnClickListener {
     }
 
     public void submit() {
+        // i make a dialog box to allow the user to pick the name of the playlist.
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Name of playlist");
 // Set up the input
@@ -97,6 +100,7 @@ public class TrackOverview extends Fragment implements View.OnClickListener {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 m_Text = input.getText().toString();
+                // if they pressed ok i call the create playlist method which creates the playlist.
                 createPlaylist();
             }
         });
@@ -114,7 +118,7 @@ public class TrackOverview extends Fragment implements View.OnClickListener {
         submit();
     }
     public void createPlaylist() {
-        System.out.println("Job done");
+        // i make a json object of what i want to pass in my post request.
         JSONObject postparams = new JSONObject();
         try {
             postparams.put("name", m_Text);
@@ -128,6 +132,7 @@ public class TrackOverview extends Fragment implements View.OnClickListener {
                     public void onResponse(JSONObject response) {
                         System.out.println("Job done");
                         try {
+                            //if ive successfully created playlist i need to add tracks all i need to do is pass it the id of the playlist.
                             addTracks(response.getString("id"));
                         } catch (JSONException e) {
 
@@ -152,10 +157,11 @@ public class TrackOverview extends Fragment implements View.OnClickListener {
         AppSingleton.getInstance(getActivity()).addToRequestQueue(jsObjRequest);
 
     }
-
+    // method to add tracks to a playlist.
     public void addTracks(final String playlistId) {
         int offset = 0;
         finished = false;
+        // could be more then 100 songs so i need a do loop.
         do {
             JSONObject postparams = new JSONObject();
             JSONArray uris = new JSONArray();
@@ -178,6 +184,7 @@ public class TrackOverview extends Fragment implements View.OnClickListener {
                         public void onResponse(JSONObject response) {
                             System.out.println("Job done");
                             if (finished) {
+                                //when im finished adding tracks i create a notification and then i open up spotify using an intent.
                                 notification();
                                 String uri = "spotify:user:" + MainActivity.userId + ":playlist:" + playlistId;
                                 Intent launcher = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
@@ -205,11 +212,9 @@ public class TrackOverview extends Fragment implements View.OnClickListener {
         }
             while (offset < list.size());
     }
-
+    // this is a method to create a notification.
     public void notification() {
-            // Create an explicit intent for an Activity in your app
             Intent intent = new Intent(getActivity(), MainActivity.class);
-            //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             PendingIntent pendingIntent = PendingIntent.getActivity(getActivity(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getActivity())
@@ -219,7 +224,6 @@ public class TrackOverview extends Fragment implements View.OnClickListener {
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(pendingIntent)
                     .setAutoCancel(true);
-            // notificationId is a unique int for each notification that you must define
              MainActivity.mNotifyManager.notify(0, mBuilder.build());
     }
 }
